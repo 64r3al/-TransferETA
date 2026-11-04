@@ -13,7 +13,8 @@ export const SPEED_TEST_MEASUREMENTS: NonNullable<ConfigOptions["measurements"]>
   { type: "download", bytes: 1_000_000, count: 3 },
   { type: "upload", bytes: 100_000, count: 3 },
   { type: "upload", bytes: 1_000_000, count: 3 },
-  { type: "download", bytes: 10_000_000, count: 2 },  { type: "upload", bytes: 5_000_000, count: 2 },
+  { type: "download", bytes: 10_000_000, count: 2 },
+  { type: "upload", bytes: 5_000_000, count: 2 },
 ];
 
 export const SPEED_TEST_MAX_PAYLOAD_BYTES = SPEED_TEST_MEASUREMENTS.reduce(
