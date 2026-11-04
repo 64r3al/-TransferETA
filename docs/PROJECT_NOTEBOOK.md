@@ -95,13 +95,13 @@ This notebook is the living engineering record for the project. It should be upd
 - Added live speed, ping, jitter, loaded-latency, phase-progress, stop/retry, and partial-result UI.
 - Added a one-click action that applies only the measured upload rate in Mbps and sets extra throughput reduction to 0%.
 - Explicitly disabled Cloudflare's optional result-logging endpoints and added clear provider/IP metadata disclosure.
-- Added adapter unit tests and mocked browser tests; dependency-backed CI still needs to run against the pinned package.
+- Added adapter unit tests and mocked browser tests. GitHub Actions run [#41925404476](https://github.com/64r3al/-TransferETA/actions/runs/41925404476) passed TypeScript checking, Vitest unit tests, the Vite production build, and Playwright browser tests for commit `6c957f3`.
 
 ## 4. Defect and issue log
 
 | ID | Date | Description | Severity | Status | Resolution / notes |
 |---|---|---|---|---|---|
-| — | 2026-11-04 | Automated dependency-backed CI and deployed-site smoke test remain pending. | Medium | Open | npm registry DNS was unavailable in the build environment; the committed GitHub Actions workflow will perform package installation and full tests. |
+| — | 2026-11-04 | Production deployment and deployed-site smoke test remain pending. | Medium | Open | GitHub Actions passed for the speed-test implementation; the site still needs a Vercel deployment and a real deployed-browser smoke test. |
 
 ## 5. Change log for decisions
 
