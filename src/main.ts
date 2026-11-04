@@ -271,7 +271,11 @@ function hideError(): void {
 function visualDuration(seconds: number): string {
   if (!Number.isFinite(seconds)) return "—";
   if (seconds < 1) return `&lt;1<span>s</span>`;
-  let remaining = Math.floor(seconds);
+  const roundedSeconds = Math.round(seconds);
+  if (seconds < 60 && roundedSeconds < 60) {
+    return `${formatNumber(seconds, 1)}<span>s</span>`;
+  }
+  let remaining = roundedSeconds;
   const parts: Array<{ value: number; unit: string }> = [];
   for (const [unit, amount] of [["d", 86_400], ["h", 3_600], ["m", 60], ["s", 1]] as const) {
     const value = Math.floor(remaining / amount);
@@ -544,7 +548,7 @@ function renderSimulation(elapsed: number): void {
   progressPercent.textContent = `${Math.floor(progress)}%`;
   progressBar.setAttribute("aria-valuenow", String(Math.floor(progress)));
   elapsedTime.textContent = formatDurationClock(Math.min(elapsed, simulationDuration));
-  remainingTime.textContent = formatDurationClock(Math.max(0, simulationDuration - elapsed));
+  remainingTime.textContent = formatDurationClock(Math.max(0, simulationDuration - elapsed), "ceil");
 }
 
 function updateSimulationButton(): void {
