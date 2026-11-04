@@ -48,3 +48,12 @@ test("keeps the simulation explicitly labelled as a preview", async ({ page }) =
   await expect(page.getByText("SIMULATION ONLY")).toBeVisible();
   await expect(page.getByText(/not a live upload/i)).toBeVisible();
 });
+
+test("preserves decimal precision for short upload estimates", async ({ page }) => {
+  await page.locator("#file-size").fill("100");
+  await page.locator("#file-unit").selectOption("MB");
+  await page.locator("#speed-value").fill("500");
+  await page.locator("#speed-unit").selectOption("Mbps");
+  await page.getByRole("button", { name: /Calculate upload time/i }).click();
+  await expect(page.locator("#result-value")).toContainText("1.6s");
+});
