@@ -5,7 +5,7 @@ import {
   calculateUploadTime,
 } from "../../src/core/calculator";
 import { toBitsPerSecond, toBytes } from "../../src/core/units";
-import { formatDuration } from "../../src/core/format";
+import { formatDuration, formatDurationClock } from "../../src/core/format";
 
 const noLoss = { throughputLossPercent: 0 };
 
@@ -118,5 +118,11 @@ describe("duration formatting", () => {
   it("handles zero and sub-second values", () => {
     expect(formatDuration(0)).toBe("0 sec");
     expect(formatDuration(0.25)).toBe("Less than 1 sec");
+  });
+
+  it("preserves fractional seconds and rounds countdowns upward", () => {
+    expect(formatDuration(1.6)).toBe("1.6 secs");
+    expect(formatDuration(59.9)).toBe("1 min");
+    expect(formatDurationClock(1.2, "ceil")).toBe("00:00:02");
   });
 });
