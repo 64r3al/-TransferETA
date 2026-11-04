@@ -86,6 +86,7 @@ This notebook is the living engineering record for the project. It should be upd
 - Added Vercel static output configuration.
 - Local TypeScript source check passed using the available compiler (TypeScript 5.8.3); 10 direct Node-based calculation smoke checks passed.
 - Full Vite/Vitest/Playwright install and execution could not be performed in this environment because DNS resolution for `registry.npmjs.org` failed. The CI workflow is configured to execute those checks in GitHub's runner.
+- GitHub Actions run [#41925404476](https://github.com/64r3al/-TransferETA/actions/runs/41925404476) passed all configured checks for the speed-test implementation, including the mocked Playwright speed-test interaction.
 - Production deployment and release tag have not been created yet.
 
 ### 2026-11-04 — Browser speed-test integration
