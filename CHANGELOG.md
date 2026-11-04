@@ -5,6 +5,9 @@ All notable changes to TransferETA are documented here. The project follows Sema
 ## [Unreleased] — Initial website implementation
 
 ### Added
+- Opt-in Cloudflare-powered browser speed test for upload/download throughput, idle ping, jitter, and loaded latency.
+- One-click handoff of the measured upload speed into the upload-time calculator, with extra throughput reduction reset to 0%.
+- Visible provider/privacy disclosure, bounded test payload, cancellation/retry controls, and mocked speed-test browser coverage.
 - Responsive TransferETA single-page website and original visual identity.
 - Upload-time, required-speed, and maximum-transfer-size calculator modes.
 - Decimal SI and binary IEC file-size conversion.
