@@ -5,7 +5,8 @@
 **Prepared:** 2026-11-04  
 **Product name:** TransferETA (working name; branding and trademark clearance are separate checks)  
 **Repository slug:** `-TransferETA`  
-**Initial release target:** `v1.0.0`
+**Initial release target:** `v1.0.0`  
+**Implementation status:** First website implementation committed; automated CI and deployment verification pending
 
 ---
 
@@ -267,7 +268,13 @@ Proposed stack:
 
 The framework decision is intentionally conservative: a small vanilla TypeScript application should be sufficient. A UI framework may be introduced only if the component/state complexity grows enough to justify the extra runtime and maintenance cost.
 
-## 11. Definition of done
+## 11. Current implementation status
+
+The first website implementation now includes the responsive one-page interface, all three calculator modes, SI/IEC conversion, throughput-reduction assumptions, result metrics, speed comparison, a time-scaled preview, copy/share actions, theme support, formula guidance, FAQ, and SEO assets. Pure calculation modules, unit tests, Playwright browser tests, GitHub Actions, and Vercel static build configuration are committed.
+
+The remaining release gates are dependency-backed CI execution, cross-browser/manual accessibility review, a production deployment smoke test, lockfile generation and commit, and the `v1.0.0` release. Code being present in `main` does not by itself mean it has been deployed or released.
+
+## 12. Definition of done
 
 A feature is complete only when:
 - Requirements and edge cases are documented.
@@ -282,7 +289,7 @@ A feature is complete only when:
 
 The v1.0 release is ready only when all P0 requirements in the QA plan pass and the production build is verified on the deployed URL.
 
-## 12. Risks and mitigations
+## 13. Risks and mitigations
 
 | Risk | Impact | Mitigation |
 |---|---|---|
@@ -295,7 +302,7 @@ The v1.0 release is ready only when all P0 requirements in the QA plan pass and 
 | Poor small-screen usability | Abandonment | Mobile-first layout and browser tests |
 | Unclear brand availability | Legal/brand conflict | Separate trademark/domain review before public marketing |
 
-## 13. Release policy
+## 14. Release policy
 
 - Use semantic versioning.
 - Keep `main` deployable.

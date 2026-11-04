@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f7fc" />
+    <meta name="description" content="Estimate upload time, find the upload speed you need, or see how much data you can transfer. A fast, private calculator with clear units and transparent assumptions." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="TransferETA — Upload time, without the guesswork" />
+    <meta property="og:description" content="Estimate file transfer time with clear units, transparent assumptions, and a beautifully simple calculator." />
+    <meta property="og:image" content="/og-preview.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <title>TransferETA — Upload time, without the guesswork</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "TransferETA",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "description": "A privacy-friendly calculator for upload time, required upload speed, and transferable file size."
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="#top" aria-label="TransferETA home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M5.5 16.5h13.2M14.8 9.8l6.7 6.7-6.7 6.7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M23.1 7.1h3.4v17.8h-3.4" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" />
+            </svg>
+          </span>
+          <span class="brand-name">Transfer<span>ETA</span></span>
+        </a>
+
+        <nav class="header-nav" aria-label="Main navigation">
+          <a href="#calculator">Calculator</a>
+          <a href="#how-it-works">How it works</a>
+          <a href="#faq">FAQ</a>
+          <a class="github-link" href="https://github.com/64r3al/-TransferETA" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.76-.24.76-.54v-2.1c-3.1.67-3.76-1.32-3.76-1.32-.5-1.28-1.24-1.62-1.24-1.62-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 .1.73 2.16 3.33 1.53.1-.72.4-1.21.72-1.49-2.47-.28-5.07-1.24-5.07-5.52 0-1.22.44-2.22 1.16-3-.12-.28-.5-1.43.11-2.97 0 0 .95-.3 3.05 1.15a10.6 10.6 0 0 1 5.55 0c2.1-1.45 3.05-1.15 3.05-1.15.61 1.54.23 2.69.11 2.97.72.78 1.16 1.78 1.16 3 0 4.29-2.61 5.24-5.1 5.51.4.35.76 1.03.76 2.08v3.06c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z"/></svg>
+            <span>GitHub</span>
+          </a>
+        </nav>
+
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch theme">
+          <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.7"/><path d="M12 2v2.1M12 19.9V22M4.93 4.93l1.48 1.48m11.18 11.18 1.48 1.48M2 12h2.1m15.8 0H22M4.93 19.07l1.48-1.48M17.59 6.41l1.48-1.48"/></svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.3 15.2A8.5 8.5 0 0 1 8.8 3.7 8.7 8.7 0 1 0 20.3 15.2Z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero section-wrap" id="top">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> A clearer way to plan your uploads</div>
+          <h1>Your next upload,<br /><span>without the guesswork.</span></h1>
+          <p class="hero-lede">Know how long your files will take to move. Get a useful estimate in seconds, with the math and assumptions kept clear.</p>
+          <div class="hero-trust-row">
+            <span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.2 3.7 4.6v4.8c0 4 2.6 6.7 6.3 8.4 3.7-1.7 6.3-4.4 6.3-8.4V4.6L10 2.2Z"/><path d="m7.2 9.8 1.8 1.8 3.9-4"/></svg> Private by design</span>
+            <span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.2v2.1M10 15.7v2.1M2.2 10h2.1m11.4 0h2.1M4.5 4.5 6 6m8 8 1.5 1.5m0-11L14 6m-8 8-1.5 1.5"/><circle cx="10" cy="10" r="4.1"/></svg> Instant calculations</span>
+            <span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5.5h14M3 10h14M3 14.5h9"/></svg> No file upload needed</span>
+          </div>
+        </div>
+        <div class="hero-visual" role="img" aria-label="Illustration showing a file moving through a transfer progress path">
+          <div class="visual-orbit orbit-one"></div>
+          <div class="visual-orbit orbit-two"></div>
+          <div class="visual-file-card">
+            <div class="file-icon"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M10 4.5h10l7 7v19H10z"/><path d="M20 4.5v7h7M14 19h9M14 24h9"/></svg></div>
+            <div class="visual-file-copy"><strong>project_final.zip</strong><span>2.4 GB · Ready to transfer</span></div>
+            <span class="file-check" aria-hidden="true">✓</span>
+          </div>
+          <div class="visual-route"><span class="route-dot"></span><span class="route-line"></span><span class="route-arrow">↗</span></div>
+          <div class="visual-speed-card"><span class="speed-label">TRANSFER RATE</span><strong>100 <small>Mbps</small></strong><span class="speed-sub"><i></i> Connection estimate</span></div>
+          <div class="visual-caption"><span class="caption-icon">↗</span><span>From file to done.<br /><b>Plan with confidence.</b></span></div>
+        </div>
+      </section>
+
+      <section class="calculator-section section-wrap" id="calculator">
+        <div class="section-heading calculator-heading">
+          <div><span class="section-kicker">THE CALCULATOR</span><h2>Make the numbers work for you.</h2></div>
+          <div class="privacy-note"><span class="lock-icon" aria-hidden="true">⌑</span><span><strong>Your data stays yours.</strong><br />Calculations happen in your browser.</span></div>
+        </div>
+
+        <div class="calculator-card">
+          <div class="calculator-side">
+            <div class="mode-switch" role="tablist" aria-label="Calculator mode">
+              <button class="mode-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="calculator-form" data-mode="upload-time"><span class="mode-number">01</span><span>Upload time</span></button>
+              <button class="mode-tab" type="button" role="tab" aria-selected="false" aria-controls="calculator-form" data-mode="required-speed"><span class="mode-number">02</span><span>Required speed</span></button>
+              <button class="mode-tab" type="button" role="tab" aria-selected="false" aria-controls="calculator-form" data-mode="maximum-size"><span class="mode-number">03</span><span>Max file size</span></button>
+            </div>
+
+            <form id="calculator-form" novalidate>
+              <div class="form-intro"><h3 id="form-title">What are you uploading?</h3><p id="form-description">Enter the file size and your available upload speed.</p></div>
+              <div id="fields" class="fields-grid" aria-live="polite"></div>
+              <div class="assumption-card">
+                <div class="assumption-topline"><div><span class="field-label">Estimated throughput reduction</span><span class="field-help">A simple allowance for speed lost to network conditions.</span></div><strong id="loss-output">0%</strong></div>
+                <input class="range-input" id="throughput-loss" type="range" min="0" max="99.9" step="0.1" value="0" aria-label="Estimated throughput reduction" />
+                <div class="range-scale"><span>0% · None</span><span>25%</span><span>50%</span><span>75%</span><span>99.9%</span></div>
+                <p class="assumption-footnote">Using a speed-test result? Keep this at 0% in most cases—measured speed already reflects real-world conditions.</p>
+              </div>
+              <div class="form-actions">
+                <button class="primary-button" type="submit"><span id="calculate-label">Calculate upload time</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 10h12M10.5 5l5 5-5 5"/></svg></button>
+                <button class="text-button" id="reset-button" type="button">Reset</button>
+              </div>
+              <p class="form-error" id="form-error" role="alert" hidden></p>
+            </form>
+          </div>
+
+          <aside class="result-side" aria-label="Calculation result">
+            <div class="result-topline"><span class="result-status"><i></i> ESTIMATE</span><span class="result-private"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 7V5.2a3.5 3.5 0 0 1 7 0V7M3.5 7h9v7h-9z"/></svg> Local calculation</span></div>
+            <div class="result-content" id="result-content" aria-live="polite" aria-atomic="true">
+              <span class="result-eyebrow">YOUR ESTIMATED UPLOAD TIME</span>
+              <div class="result-hero-value" id="result-value">13<span>m</span> 20<span>s</span></div>
+              <p class="result-description" id="result-description">That's the estimated time for a 10 GB file at 100 Mbps.</p>
+              <div class="result-divider"></div>
+              <div class="metrics-grid" id="metrics-grid">
+                <div class="metric-cell"><span>File size</span><strong>10 GB</strong></div>
+                <div class="metric-cell"><span>Upload speed</span><strong>100 Mbps</strong></div>
+                <div class="metric-cell"><span>Effective speed</span><strong>100 Mbps</strong></div>
+                <div class="metric-cell"><span>Speed reduction</span><strong>0%</strong></div>
+              </div>
+              <div class="result-actions">
+                <button class="result-action-button" id="copy-result" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="7" width="9" height="10" rx="1.5"/><path d="M12.5 7V4.5A1.5 1.5 0 0 0 11 3H5a1.5 1.5 0 0 0-1.5 1.5v8A1.5 1.5 0 0 0 5 14h2"/></svg><span>Copy result</span></button>
+                <button class="result-action-button" id="share-result" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="15" cy="4.5" r="2"/><circle cx="5" cy="10" r="2"/><circle cx="15" cy="15.5" r="2"/><path d="m6.8 9.1 6.4-3.7m-6.4 5.5 6.4 3.7"/></svg><span>Share estimate</span></button>
+              </div>
+            </div>
+            <div class="result-footnote"><span class="info-icon">i</span><span>Real transfer times can vary with server limits, congestion, Wi-Fi quality, and other network conditions.</span></div>
+          </aside>
+        </div>
+
+        <div class="simulation-card" id="simulation-card">
+          <div class="simulation-heading">
+            <div class="simulation-title-wrap"><span class="simulation-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h16M4 12h10M4 16.5h7"/><path d="m16 14 4 2.5-4 2.5z"/></svg></span><div><h3>Transfer preview</h3><p>See how progress would look over time.</p></div></div>
+            <span class="simulation-badge">SIMULATION ONLY</span>
+          </div>
+          <div class="simulation-body">
+            <div class="progress-area"><div class="progress-meta"><span id="simulation-state">Ready to preview</span><strong id="progress-percent">0%</strong></div><div class="progress-track" role="progressbar" id="progress-bar" aria-label="Simulated transfer progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-fill"></span></div><div class="progress-times"><span><small>ELAPSED</small><strong id="elapsed-time">00:00</strong></span><span><small>REMAINING</small><strong id="remaining-time">13:20</strong></span></div></div>
+            <div class="simulation-controls"><label for="simulation-speed">Preview pace<select id="simulation-speed"><option value="1">1× real time</option><option value="10">10× faster</option><option value="60" selected>60× faster</option><option value="300">300× faster</option><option value="3600">3,600× faster</option></select></label><div class="simulation-buttons"><button class="simulation-play" id="simulation-toggle" type="button"><span>▶</span> Start preview</button><button class="simulation-reset" id="simulation-reset" type="button" aria-label="Reset simulation">↺</button></div></div>
+          </div>
+          <p class="simulation-note">This is a time-scaled visual estimate—not a live upload. No file is selected, read, or transferred.</p>
+        </div>
+
+        <div class="comparison-section" id="comparison-section">
+          <div class="comparison-heading"><div><span class="section-kicker">SPEED COMPARISON</span><h3>What difference does speed make?</h3></div><p>Compare upload times for the same file at a few common connection rates.</p></div>
+          <div class="comparison-grid" id="comparison-grid">
+            <div class="comparison-item"><span>25 Mbps</span><strong>53 min 20 sec</strong><i></i></div>
+            <div class="comparison-item"><span>50 Mbps</span><strong>26 min 40 sec</strong><i></i></div>
+            <div class="comparison-item is-current"><span>100 Mbps <em>Current</em></span><strong>13 min 20 sec</strong><i></i></div>
+            <div class="comparison-item"><span>500 Mbps</span><strong>2 min 40 sec</strong><i></i></div>
+          </div>
+          <p class="comparison-caption" id="comparison-caption">Based on your current file size and throughput reduction. Comparison assumes a stable connection.</p>
+        </div>
+      </section>
+
+      <section class="benefits-section section-wrap" aria-labelledby="benefits-title">
+        <div class="section-heading"><div><span class="section-kicker">BUILT FOR REAL-WORLD QUESTIONS</span><h2 id="benefits-title">One tool. Three useful answers.</h2></div><p>Whether you're planning a delivery, choosing a connection, or working against a deadline, get to the number that matters.</p></div>
+        <div class="benefits-grid">
+          <article class="benefit-card"><span class="benefit-number">01</span><div class="benefit-icon blue"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 4v14m-5-5 5 5 5-5M5 21h18"/></svg></div><h3>Estimate upload time</h3><p>Start with a file size and your upload speed. Get a clear, easy-to-read time estimate.</p><span class="benefit-link">Plan your transfer <b>↗</b></span></article>
+          <article class="benefit-card"><span class="benefit-number">02</span><div class="benefit-icon violet"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M4.5 20.5 11 14l4.5 4.5 8-9M17 9h7v7"/></svg></div><h3>Find the speed you need</h3><p>Set a deadline and file size. See the upload throughput required to make it happen.</p><span class="benefit-link">Work backwards <b>↗</b></span></article>
+          <article class="benefit-card"><span class="benefit-number">03</span><div class="benefit-icon mint"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 4v20M4 14h20M8 8l12 12M20 8 8 20"/><circle cx="14" cy="14" r="9.5"/></svg></div><h3>Know your transfer limit</h3><p>Enter your speed and available time. Estimate how much data you can send.</p><span class="benefit-link">Set your capacity <b>↗</b></span></article>
+        </div>
+      </section>
+
+      <section class="how-section section-wrap" id="how-it-works">
+        <div class="how-copy"><span class="section-kicker">THE MATH, MADE SIMPLE</span><h2>Behind every estimate is a simple formula.</h2><p>TransferETA converts your file size into bits, uses your effective upload rate, and calculates the time needed. We keep the assumptions visible, so you know exactly what the number means.</p><a class="inline-link" href="https://github.com/64r3al/-TransferETA/blob/main/docs/CALCULATION_METHOD.md" target="_blank" rel="noreferrer">Read the calculation method <span>↗</span></a></div>
+        <div class="formula-card"><div class="formula-card-top"><span>UPLOAD TIME FORMULA</span><span class="formula-chip">Simple estimate</span></div><div class="formula-equation"><span class="formula-var">Time</span><span class="formula-equals">=</span><span class="formula-fraction"><b>File size (bytes) × 8</b><i></i><b>Effective speed (bits/s)</b></span></div><div class="formula-explanation"><div><span class="formula-dot blue-dot"></span><p><b>File size</b><br />Converted to bits before calculation.</p></div><div><span class="formula-dot green-dot"></span><p><b>Effective speed</b><br />Upload speed after your selected reduction.</p></div></div><div class="formula-example"><span>EXAMPLE</span><p>1 GB at 100 Mbps with 0% reduction</p><strong>80 seconds</strong></div></div>
+      </section>
+
+      <section class="examples-section section-wrap" aria-labelledby="examples-title">
+        <div class="section-heading"><div><span class="section-kicker">A FEW QUICK REFERENCES</span><h2 id="examples-title">Get a feel for the numbers.</h2></div><p>Illustrative upload times for common file sizes. Your actual estimate depends on the speed and conditions you enter above.</p></div>
+        <div class="examples-table-wrap"><table class="examples-table"><thead><tr><th>FILE SIZE</th><th>25 Mbps</th><th>100 Mbps</th><th>500 Mbps</th></tr></thead><tbody><tr><td><span class="table-file-icon">▤</span> 100 MB</td><td>32 sec</td><td>8 sec</td><td>1.6 sec</td></tr><tr><td><span class="table-file-icon">▤</span> 1 GB</td><td>5 min 20 sec</td><td>1 min 20 sec</td><td>16 sec</td></tr><tr><td><span class="table-file-icon">▤</span> 10 GB</td><td>53 min 20 sec</td><td>13 min 20 sec</td><td>2 min 40 sec</td></tr><tr><td><span class="table-file-icon">▤</span> 50 GB</td><td>4 hr 26 min 40 sec</td><td>1 hr 6 min 40 sec</td><td>13 min 20 sec</td></tr></tbody></table></div>
+        <p class="table-note"><span>ⓘ</span> Uses decimal file sizes (1 GB = 1,000,000,000 bytes) and assumes a steady upload rate with no additional reduction.</p>
+      </section>
+
+      <section class="faq-section section-wrap" id="faq">
+        <div class="faq-intro"><span class="section-kicker">GOOD TO KNOW</span><h2>Questions, answered.</h2><p>A few helpful details to make your estimate more useful.</p></div>
+        <div class="faq-list">
+          <details><summary>What's the difference between Mbps and MB/s?<span class="faq-plus"></span></summary><p>Mbps means megabits per second, while MB/s means megabytes per second. One byte contains eight bits, so 1 MB/s equals 8 Mbps when using decimal units. Internet plans are usually advertised in Mbps, while file transfer dialogs often show MB/s.</p></details>
+          <details><summary>Why can my real upload take longer than this estimate?<span class="faq-plus"></span></summary><p>The calculator models a steady payload rate. Real transfers can be affected by Wi-Fi signal quality, network congestion, server upload limits, protocol overhead, retransmissions, and other devices using the connection. Treat the result as a planning estimate, not a guarantee.</p></details>
+          <details><summary>Should I add a throughput reduction if I used a speed test?<span class="faq-plus"></span></summary><p>Usually, no. A speed test normally reports measured throughput after many real-world conditions have already affected the result. Keep the reduction at 0% unless you have a specific additional loss you want to account for.</p></details>
+          <details><summary>Does TransferETA upload or inspect my files?<span class="faq-plus"></span></summary><p>No. TransferETA only uses the size and speed values you type in. It does not ask you to select a file, read file contents, or transfer anything. All calculations run locally in your browser.</p></details>
+          <details><summary>What does the simulation do?<span class="faq-plus"></span></summary><p>The preview animates progress over a time-scaled clock using the estimate. It is not connected to your network and does not upload a real file. You can change the preview pace, pause, resume, or reset it.</p></details>
+          <details><summary>Are GB and GiB the same?<span class="faq-plus"></span></summary><p>No. GB is decimal and equals 1,000,000,000 bytes. GiB is binary and equals 1,073,741,824 bytes. TransferETA supports both conventions so your estimate matches the units you are using.</p></details>
+        </div>
+      </section>
+
+      <section class="closing-cta section-wrap"><div class="closing-icon"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5.5 16.5h13.2M14.8 9.8l6.7 6.7-6.7 6.7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M23.1 7.1h3.4v17.8h-3.4" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg></div><div><h2>Ready when your next file is.</h2><p>Get a clearer picture before you hit upload.</p></div><a href="#calculator" class="cta-button">Calculate my upload <span>↑</span></a></section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-main section-wrap"><div class="footer-brand-block"><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M5.5 16.5h13.2M14.8 9.8l6.7 6.7-6.7 6.7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M23.1 7.1h3.4v17.8h-3.4" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg></span><span class="brand-name">Transfer<span>ETA</span></span></a><p>A little more clarity for every transfer.</p></div><div class="footer-links"><div><span>EXPLORE</span><a href="#calculator">Calculator</a><a href="#how-it-works">How it works</a><a href="#faq">FAQ</a></div><div><span>PROJECT</span><a href="https://github.com/64r3al/-TransferETA" target="_blank" rel="noreferrer">GitHub repository ↗</a><a href="https://github.com/64r3al/-TransferETA/blob/main/docs/PROJECT_PLAN.md" target="_blank" rel="noreferrer">Project plan ↗</a><a href="https://github.com/64r3al/-TransferETA/blob/main/docs/CALCULATION_METHOD.md" target="_blank" rel="noreferrer">Calculation method ↗</a></div></div></div>
+      <div class="footer-bottom section-wrap"><span>© <span id="current-year">2026</span> TransferETA. Built for clarity.</span><span><i></i> Free to use · Private by design · Open source</span></div>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

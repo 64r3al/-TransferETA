@@ -122,3 +122,11 @@ A small calculator should not require a large runtime bundle. Any material budge
 - [ ] Production build succeeds from a clean install.
 - [ ] Deployed URL passes smoke tests.
 - [ ] Changelog and release tag are prepared.
+
+
+## 9. Current verification record
+
+- Strict TypeScript application source check completed successfully using the compiler available in the build environment (TypeScript 5.8.3).
+- Ten direct Node-based calculation smoke checks passed, covering SI/IEC conversion, bit/byte conversion, upload time, throughput reduction, maximum-size calculation, required-speed calculation, formatting, and invalid speed.
+- Vitest and Playwright test suites are committed but have not yet been executed in this environment because DNS resolution for the npm registry failed. GitHub Actions is configured to install dependencies and execute both test suites.
+- A production build and deployed-site smoke test remain release gates.

@@ -10,7 +10,7 @@ This notebook is the living engineering record for the project. It should be upd
 | Repository slug | `-TransferETA` |
 | Intended owner | `64r3al` |
 | Initial plan version | 1.0 |
-| Current status | Planning / pre-implementation |
+| Current status | Website implemented; verification and deployment pending |
 | Baseline date | 2026-11-04 |
 | Planned first release | `v1.0.0` |
 
@@ -66,23 +66,25 @@ This notebook is the living engineering record for the project. It should be upd
 - Specified SI and IEC units and bit/byte conventions.
 - Established the canonical formulas and sample values.
 - Defined the client-side architecture and initial quality gates.
-- No application implementation or production deployment has been completed at this stage.
 
-### 2026-11-04 — Repository foundation published
+### 2026-11-04 — First website implementation
 
-- Created the public GitHub repository: https://github.com/64r3al/-TransferETA.
-- Published the project README and the complete product/engineering documentation set.
-- Added repository standards, issue templates, and a pull-request template.
-- Initial overview commit: `40b2aa1`.
-- Documentation foundation commit: `a2926c8`.
-- Verified the `main` branch contains all 17 expected tracked files.
-- The application scaffold, calculator implementation, CI workflow, and deployment have not yet been started.
+- Added the semantic single-page website, original responsive visual system, light/dark theme, SEO metadata, favicon, social preview, and web manifest.
+- Implemented the three calculator modes and common presets.
+- Implemented SI/IEC conversions, bit/byte-aware upload-rate conversions, range checks, calculation errors, duration/size/rate formatting, and speed comparisons.
+- Added clipboard copy, shareable estimate URLs, and a mathematically time-scaled preview. The preview does not select, read, or upload files.
+- Added Vitest unit tests and Playwright browser tests.
+- Added GitHub Actions jobs for typechecking, unit tests, production build, and browser checks.
+- Added Vercel static output configuration.
+- Local TypeScript source check passed using the available compiler (TypeScript 5.8.3); 10 direct Node-based calculation smoke checks passed.
+- Full Vite/Vitest/Playwright install and execution could not be performed in this environment because DNS resolution for `registry.npmjs.org` failed. The CI workflow is configured to execute those checks in GitHub's runner.
+- Production deployment and release tag have not been created yet.
 
 ## 4. Defect and issue log
 
 | ID | Date | Description | Severity | Status | Resolution / notes |
 |---|---|---|---|---|---|
-| — | — | No implementation defects recorded yet. | — | — | Implementation has not started. |
+| — | 2026-11-04 | Automated dependency-backed CI and deployed-site smoke test remain pending. | Medium | Open | npm registry DNS was unavailable in the build environment; the committed GitHub Actions workflow will perform package installation and full tests. |
 
 ## 5. Change log for decisions
 

@@ -19,8 +19,7 @@ A byte contains 8 bits.
 | Unit | Exact multiplier |
 |---|---:|
 | kbit/s (kb/s) | 1,000 bit/s |
-| Mbit/s (Mb/s) | 1,000,000 bit/s |
-| Gbit/s (Gb/s) | 1,000,000,000 bit/s |
+| Mbit/s (Mb/s) | 1,000,000 bit/s || Gbit/s (Gb/s) | 1,000,000,000 bit/s |
 | kB | 1,000 bytes |
 | MB | 1,000,000 bytes |
 | GB | 1,000,000,000 bytes |

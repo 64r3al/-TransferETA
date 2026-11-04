@@ -1,0 +1,12 @@
+{
+  "name": "TransferETA — Upload Time Calculator",
+  "short_name": "TransferETA",
+  "description": "Estimate file upload time with clear units and transparent assumptions.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f7fc",
+  "theme_color": "#315df5",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

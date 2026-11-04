@@ -2,16 +2,16 @@
 
 ## 1. Architecture overview
 
-TransferETA is a static, client-side application. The UI collects values, validates them, converts them into canonical units, calls pure calculation functions, and renders formatted results. No calculation requires a server.
+TransferETA is a static, client-side TypeScript application. The HTML provides the semantic page structure, the main controller manages form state and interactions, and pure functions in `src/core/` handle every conversion and calculation.
 
 ```text
 User input
    │
    ▼
-UI / form state
+Accessible HTML form + main controller
    │
    ▼
-Validation + normalization
+Validation and conversion
    │
    ▼
 Canonical units (bytes, bits per second, seconds)
@@ -20,179 +20,134 @@ Canonical units (bytes, bits per second, seconds)
 Pure calculation core
    │
    ▼
-Result model
+Typed result model
    │
    ▼
-Formatting + accessible result presentation
+Formatting, metrics, share URL, simulation preview
 ```
 
-The UI must not reimplement formulas. All three calculator modes use the same conversion and calculation modules.
+The UI does not duplicate the calculation formulas. Each mode calls the same core utilities.
 
-## 2. Proposed repository layout
+## 2. Current repository layout
 
 ```text
 -TransferETA/
 ├── public/
 │   ├── favicon.svg
-│   ├── og-image.png
+│   ├── og-preview.svg
 │   ├── robots.txt
 │   └── site.webmanifest
 ├── src/
 │   ├── core/
 │   │   ├── calculator.ts
-│   │   ├── units.ts
-│   │   ├── formatter.ts
-│   │   ├── validation.ts
-│   │   └── types.ts
-│   ├── components/
-│   │   ├── calculator-form.ts
-│   │   ├── result-panel.ts
-│   │   ├── simulation.ts
-│   │   ├── theme-toggle.ts
-│   │   └── notifications.ts
-│   ├── state/
-│   │   └── calculator-state.ts
-│   ├── styles/
-│   │   ├── tokens.css
-│   │   ├── global.css
-│   │   ├── layout.css
-│   │   └── components.css
-│   ├── app.ts
-│   └── main.ts
+│   │   ├── format.ts
+│   │   └── units.ts
+│   ├── main.ts
+│   ├── styles.css
+│   └── vite-env.d.ts
 ├── tests/
-│   ├── unit/
-│   │   ├── calculator.test.ts
-│   │   ├── units.test.ts
-│   │   ├── formatter.test.ts
-│   │   └── validation.test.ts
-│   └── e2e/
-│       ├── calculator.spec.ts
-│       ├── responsive.spec.ts
-│       └── accessibility.spec.ts
+│   ├── e2e/website.spec.ts
+│   └── unit/calculator.test.ts
 ├── docs/
 │   ├── PROJECT_PLAN.md
+│   ├── PROJECT_NOTEBOOK.md
 │   ├── ARCHITECTURE.md
 │   ├── CALCULATION_METHOD.md
 │   ├── QA_TEST_PLAN.md
-│   ├── ROADMAP.md
-│   └── PROJECT_NOTEBOOK.md
+│   └── ROADMAP.md
 ├── .github/
 │   ├── ISSUE_TEMPLATE/
+│   ├── PULL_REQUEST_TEMPLATE.md
 │   └── workflows/ci.yml
 ├── index.html
 ├── package.json
-├── package-lock.json
-├── tsconfig.json
-├── vite.config.ts
+├── tsconfig.app.json
 ├── vitest.config.ts
 ├── playwright.config.ts
-├── eslint.config.js
-├── .editorconfig
-├── .gitignore
-├── LICENSE
+├── vercel.json
 ├── README.md
 ├── CONTRIBUTING.md
 ├── SECURITY.md
-└── CHANGELOG.md
+└── LICENSE
 ```
 
 ## 3. Module responsibilities
 
-### `core/units.ts`
+### `src/core/units.ts`
 
-- Defines supported speed and size units.
-- Holds canonical conversion factors.
-- Converts user values to bytes or bits per second.
-- Converts canonical values to requested display units.
-- Contains no DOM or browser dependencies.
+- Defines supported upload-rate and file-size units.
+- Holds exact SI and IEC conversion factors.
+- Converts values to canonical bytes or bits per second.
+- Formats file sizes and rates.
+- Enforces conservative supported numeric bounds.
+- Has no DOM or browser dependency.
 
-### `core/validation.ts`
+### `src/core/calculator.ts`
 
-- Validates finite numeric values and allowed ranges.
-- Rejects invalid units and impossible durations.
-- Returns structured validation errors rather than throwing for expected user mistakes.
+- Exposes pure functions for upload duration, required nominal rate, and maximum transferable size.
+- Applies the documented throughput-reduction model.
+- Returns typed results or clear calculation errors.
+- Has no formatting or UI code.
 
-### `core/calculator.ts`
+### `src/core/format.ts`
 
-- Exposes pure functions for upload duration, required speed, and maximum transferable size.
-- Accepts canonical values and explicit throughput reduction.
-- Returns a typed result or structured error.
-- Contains no formatting or UI code.
+- Formats seconds into human-readable durations and clock values.
+- Delegates size and rate formatting to the unit module.
+- Keeps presentation rounding separate from arithmetic.
 
-### `core/formatter.ts`
+### `src/main.ts`
 
-- Converts seconds into human-friendly duration strings.
-- Formats bytes and rates with explicit units.
-- Keeps rounding and display conventions out of calculation logic.
+- Owns selected mode and per-mode form drafts.
+- Renders input fields and handles presets.
+- Validates user input before calling core functions.
+- Renders results and comparison cards.
+- Builds and parses share URLs using an allowlist of modes and units.
+- Handles theme preference, clipboard actions, toast feedback, and the preview simulation.
 
-### `components/`
+### `src/styles.css`
 
-- Owns DOM rendering and user interaction.
-- Delegates all calculations to `core/`.
-- Uses accessible labels, live regions, and focus handling.
+- Defines light/dark design tokens.
+- Implements responsive layout and component styling.
+- Includes keyboard focus and reduced-motion behavior.
+- Uses local CSS and system font stacks; no remote font or visual dependency is required.
 
-### `components/simulation.ts`
+### `tests/`
 
-- Runs a mathematical playback preview.
-- Uses a monotonic time source (`performance.now()` where available).
-- Does not create network requests or read local files.
+- Unit tests cover conversions, all three formulas, bounds, and duration formatting.
+- Playwright tests cover the main user workflows and key page interactions.
 
-### `state/`
+## 4. Canonical data model
 
-- Maintains selected mode, inputs, validation state, and result state.
-- Avoids duplicating source-of-truth values in multiple DOM components.
+All core functions operate on:
 
-## 4. Data model
+- File size in bytes.
+- Nominal/effective transfer rate in bits per second.
+- Duration in seconds.
+- Throughput reduction as a percentage from 0 to 99.9.
 
-Proposed canonical input types:
-
-```ts
-export type CalculatorMode = "upload-time" | "required-speed" | "maximum-size";
-
-export interface TransferAssumptions {
-  /** Fraction of nominal throughput unavailable for payload, from 0 to < 1. */
-  throughputLoss: number;
-}
-
-export interface UploadTimeInput {
-  fileSizeBytes: number;
-  nominalBitsPerSecond: number;
-  assumptions: TransferAssumptions;
-}
-
-export interface RequiredSpeedInput {
-  fileSizeBytes: number;
-  targetDurationSeconds: number;
-  assumptions: TransferAssumptions;
-}
-
-export interface MaximumSizeInput {
-  nominalBitsPerSecond: number;
-  availableDurationSeconds: number;
-  assumptions: TransferAssumptions;
-}
-```
-
-These are design contracts. The implementation may refine names, branded types, and error unions while preserving the semantics.
+The domain contracts are declared in `src/core/calculator.ts`.
 
 ## 5. State and rendering principles
 
 - Keep core calculations pure and deterministic.
-- Keep transient form state separate from computed result state.
-- Recalculate only on an intentional user action or a clearly documented live-update interaction.
-- Preserve valid inputs when changing modes where practical.
-- Avoid rebuilding the entire page for a small input change.
-- Announce result changes through a restrained `aria-live` region.
-- Do not move focus to the result automatically unless the interaction pattern explicitly requires it.
+- Keep transient form drafts separate for each mode.
+- Recalculate on explicit submit and when switching modes.
+- Preserve values when changing modes where their meaning remains valid.
+- Announce results through a restrained `aria-live` region.
+- Show an error and invalidate the previous result when the current input set is invalid.
+- Never automatically move focus to the result.
 
-## 6. Build and deployment
+## 6. Simulation design
+
+The preview advances a mathematical elapsed-time value using `performance.now()` and `requestAnimationFrame`. Playback multipliers affect only preview time. The displayed nominal/effective network rate remains unchanged. The preview makes no network requests and does not access the File API.
+
+## 7. Build and deployment
 
 - Vite builds the static production bundle into `dist/`.
-- The host serves `index.html` and static assets over HTTPS.
-- No API routes, environment secrets, or runtime database are required.
-- Configure correct cache headers for fingerprinted assets and revalidation for HTML.
-- Verify the deployed build and browser console after each production release.
+- `vercel.json` declares Vite and the `dist` output directory.
+- The site requires no serverless functions, API routes, environment secrets, or runtime database.
+- The production URL must be smoke-tested before the first release.
 
-## 7. Dependency policy
+## 8. Dependency policy
 
-Every runtime dependency must have a clear, documented value. Prefer browser APIs and small local utilities. Development tools such as Vitest, Playwright, TypeScript, and linting may be included because they support quality assurance, but should not increase the production runtime unnecessarily.
+Runtime dependencies are intentionally zero. Development dependencies are limited to Vite, TypeScript, Vitest, and Playwright. Do not add a UI framework, icon package, analytics library, remote font, or backend without documenting the concrete benefit and cost.

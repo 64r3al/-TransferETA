@@ -1,109 +1,87 @@
 # Development Roadmap
 
-The roadmap is phase-gated: each phase is reviewed and tested before the next begins. Dates are intentionally not promised until implementation effort and scope are validated.
+The roadmap is phase-gated. Completed implementation milestones are recorded below; production release remains separate from code completion.
 
 ## Phase 0 — Repository foundation
 
-**Deliverables**
-- Create the GitHub repository under the intended owner.
-- Add README, license, contribution and security guidance.
-- Add this documentation set and initial project notebook.
-- Configure branch and repository settings where available.
-- Add issue templates and pull-request template.
+**Status: Complete**
 
-**Exit criteria**
-- Repository metadata is correct.
-- Documentation is internally consistent.
-- Default branch and first commit are in place.
+- Public GitHub repository established.
+- README, product plan, architecture, calculation specification, QA plan, roadmap, and notebook committed.
+- Contribution/security guidance and GitHub issue/PR templates added.
 
 ## Phase 1 — Application scaffold
 
-**Deliverables**
-- Vite + TypeScript setup.
-- Strict TypeScript configuration.
-- Lint/format configuration.
-- Vitest and Playwright setup.
-- Minimal semantic page shell and design tokens.
+**Status: Implemented; dependency-backed CI pending**
 
-**Exit criteria**
-- Clean install, typecheck, tests, and production build pass in CI.
+- Vite + TypeScript package configuration.
+- Strict TypeScript application settings.
+- Vitest and Playwright configuration.
+- Semantic HTML page shell, original brand identity, and responsive design system.
+- GitHub Actions quality workflow.
 
 ## Phase 2 — Calculation core
 
-**Deliverables**
-- Canonical unit constants and conversions.
-- Validation utilities.
-- Upload-time calculation.
-- Required-speed calculation.
-- Maximum-size calculation.
-- Duration, size, and speed formatters.
+**Status: Implemented**
 
-**Exit criteria**
-- All worked examples and edge cases in the calculation specification pass.
-- Core has no DOM dependencies.
+- SI and IEC unit conversion.
+- Explicit bit/byte upload-rate conversion.
+- Upload-time, required-speed, and maximum-size formulas.
+- Throughput-reduction validation and range handling.
+- Duration, rate, and file-size formatting.
+- Unit tests for worked examples and inverse calculation behavior.
 
 ## Phase 3 — Main calculator experience
 
-**Deliverables**
-- Mode switcher.
-- Accessible forms and unit selectors.
-- Presets.
-- Results panel.
-- Error handling and reset behavior.
+**Status: Implemented**
 
-**Exit criteria**
-- All three modes work end to end on desktop and mobile.
+- Three-mode switcher and input forms.
+- Unit selectors and common presets.
+- Result metrics and friendly validation.
+- Copy and share actions.
+- Shareable URLs with mode/unit allowlists.
+- Dynamic speed comparison.
 
 ## Phase 4 — Visual design and responsive behavior
 
-**Deliverables**
-- Final design tokens and typography.
-- Polished layout, input, result, and navigation components.
-- Light/dark themes.
-- Reduced-motion behavior.
+**Status: Implemented; manual device review pending**
 
-**Exit criteria**
-- Responsive and accessibility checks pass.
+- Premium light/dark interface.
+- Responsive desktop/tablet/mobile layouts.
+- Keyboard-friendly mode tabs and visible focus styling.
+- Reduced-motion support.
+- SEO metadata, favicon, web manifest, and social preview graphic.
 
 ## Phase 5 — Optional simulation and sharing
 
-**Deliverables**
-- Mathematical simulation preview.
-- Pause/resume/reset.
-- Optional playback multipliers.
-- Shareable estimate URLs, if retained in scope.
+**Status: Implemented**
 
-**Exit criteria**
-- No confusion with actual transfer; state and timer behavior is deterministic and tested.
+- Time-scaled mathematical transfer preview.
+- Pause/resume/reset and playback multipliers.
+- Shareable estimate URL.
+- Explicit disclosure that the preview is not a live upload.
 
-## Phase 6 — Content, SEO, and launch preparation
+## Phase 6 — Content and SEO
 
-**Deliverables**
-- How-it-works content.
-- Worked examples and FAQs.
-- Metadata, favicon, social preview, sitemap, and robots policy.
-- Privacy and limitations copy.
+**Status: Implemented**
 
-**Exit criteria**
-- Metadata matches visible content; no unsupported claims or misleading structured data.
+- Formula explanation and worked examples.
+- FAQs and visible privacy statements.
+- Open Graph/Twitter metadata, WebApplication structured data, robots policy, and web manifest.
 
-## Phase 7 — Release candidate and v1.0.0
+## Phase 7 — Verification and release
 
-**Deliverables**
-- Full QA pass.
-- Production build and deployment.
-- Smoke test on the production URL.
-- Changelog and release notes.
-- `v1.0.0` Git tag.
+**Status: In progress**
 
-**Exit criteria**
-- All release checklist items pass; known limitations are documented.
+- TypeScript source check and direct core calculation smoke checks completed in the build environment.
+- Automated Vitest and Playwright suites are committed but were not executed locally because the npm registry could not be resolved from the build environment.
+- CI workflow is configured to install dependencies and run typecheck, unit tests, browser tests, and production build.
+- Production deployment, deployed-site smoke test, package lockfile generation, and `v1.0.0` tag remain outstanding.
 
 ## Post-v1.0 candidates
 
-- Download-time mode using the same engine.
-- Compare several upload rates side by side.
-- Multiple-file total size calculator.
-- Local-only estimate history, opt-in.
-- More localization options.
-- Advanced real-world guidance with clear uncertainty disclaimers.
+- Download-time mode using the same calculation engine.
+- Multiple-file combined-size calculator.
+- Additional language/localization options.
+- Optional browser-local estimate history.
+- More advanced transfer guidance with explicit uncertainty disclaimers.
