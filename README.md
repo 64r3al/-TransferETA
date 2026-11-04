@@ -7,7 +7,7 @@ Know how long your upload will take.
 
 TransferETA is a privacy-first browser tool for estimating file-transfer time, finding the upload speed needed to meet a deadline, or estimating the maximum amount of data transferable in a given time. It uses explicit units, transparent assumptions, and a single calculation core shared by all three modes.
 
-> **Current status:** The complete first website implementation is in the repository. It is ready for local development and CI verification. A production deployment and `v1.0.0` release have not yet been published.
+> **Current status:** The complete first website implementation, including the opt-in network speed test, is in the repository. GitHub Actions has passed TypeScript checking, unit tests, Playwright browser tests, and the production build for the current speed-test implementation. A production deployment and `v1.0.0` release have not yet been published.
 
 **Repository:** [github.com/64r3al/-TransferETA](https://github.com/64r3al/-TransferETA)
 
