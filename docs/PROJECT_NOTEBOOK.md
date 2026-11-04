@@ -68,6 +68,16 @@ This notebook is the living engineering record for the project. It should be upd
 - Defined the client-side architecture and initial quality gates.
 - No application implementation or production deployment has been completed at this stage.
 
+### 2026-11-04 — Repository foundation published
+
+- Created the public GitHub repository: https://github.com/64r3al/-TransferETA.
+- Published the project README and the complete product/engineering documentation set.
+- Added repository standards, issue templates, and a pull-request template.
+- Initial overview commit: `40b2aa1`.
+- Documentation foundation commit: `a2926c8`.
+- Verified the `main` branch contains all 16 expected tracked files.
+- The application scaffold, calculator implementation, CI workflow, and deployment have not yet been started.
+
 ## 4. Defect and issue log
 
 | ID | Date | Description | Severity | Status | Resolution / notes |
