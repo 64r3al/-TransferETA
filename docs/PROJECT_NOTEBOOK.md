@@ -75,7 +75,7 @@ This notebook is the living engineering record for the project. It should be upd
 - Added repository standards, issue templates, and a pull-request template.
 - Initial overview commit: `40b2aa1`.
 - Documentation foundation commit: `a2926c8`.
-- Verified the `main` branch contains all 16 expected tracked files.
+- Verified the `main` branch contains all 17 expected tracked files.
 - The application scaffold, calculator implementation, CI workflow, and deployment have not yet been started.
 
 ## 4. Defect and issue log
