@@ -5,7 +5,12 @@ export function formatDuration(totalSeconds: number): string {
   if (totalSeconds === 0) return "0 sec";
   if (totalSeconds < 1) return "Less than 1 sec";
 
-  let remainder = Math.floor(totalSeconds);
+  const roundedSeconds = Math.round(totalSeconds);
+  if (totalSeconds < 60 && roundedSeconds < 60) {
+    return `${formatNumber(totalSeconds, 1)} secs`;
+  }
+
+  let remainder = roundedSeconds;
   const units: Array<[string, number]> = [
     ["day", 86_400],
     ["hour", 3_600],
@@ -24,9 +29,9 @@ export function formatDuration(totalSeconds: number): string {
   return parts.join(" ");
 }
 
-export function formatDurationClock(totalSeconds: number): string {
+export function formatDurationClock(totalSeconds: number, rounding: "floor" | "ceil" = "floor"): string {
   if (!Number.isFinite(totalSeconds) || totalSeconds < 0) return "—";
-  const seconds = Math.floor(totalSeconds);
+  const seconds = rounding === "ceil" ? Math.ceil(totalSeconds) : Math.floor(totalSeconds);
   const days = Math.floor(seconds / 86_400);
   const hours = Math.floor((seconds % 86_400) / 3_600);
   const minutes = Math.floor((seconds % 3_600) / 60);
