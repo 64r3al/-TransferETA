@@ -16,6 +16,9 @@
     "build": "npm run typecheck && vite build",
     "preview": "vite preview --host 0.0.0.0"
   },
+  "dependencies": {
+    "@cloudflare/speedtest": "1.16.0"
+  },
   "devDependencies": {
     "@playwright/test": "1.64.1",
     "typescript": "7.0.2",

@@ -71,6 +71,8 @@ Give users a dependable answer to a simple question—“How long will this uplo
 
 ### Must-have for v1.0
 
+- Opt-in browser network speed test for download throughput, upload throughput, idle latency, and jitter.
+- One-click handoff of measured upload speed into upload-time mode, with additional throughput reduction reset to 0%.
 - Upload-time calculator.
 - Required-upload-speed calculator.
 - Maximum-transferable-size calculator.
@@ -125,7 +127,18 @@ The first useful calculator interaction must be visible without excessive scroll
 
 ## 7. Functional requirements
 
-### 7.1 Upload-time mode
+### 7.1 Browser speed test
+
+- Start only after an explicit visitor action; never run on page load.
+- Use the official `@cloudflare/speedtest` browser engine and Cloudflare's edge network.
+- Report measured upload/download throughput, idle latency, jitter, and loaded latency where available.
+- Provide visible progress, phase labels, cancellation, retry, partial-result handling, and an apply action.
+- Apply only the measured upload rate to upload-time mode; do not treat download rate as upload rate.
+- Disable the package's optional result-logging endpoints (`logAimApiUrl` and `logMeasurementApiUrl` are null).
+- Disclose that measurement traffic goes to Cloudflare and exposes ordinary request metadata, including IP address.
+- Keep a bounded measurement plan and hard timeouts. No TURN/packet-loss test is included because that requires separately provisioned infrastructure.
+
+### 7.2 Upload-time mode
 
 Inputs:
 - File size: positive or zero finite numeric value.
@@ -142,7 +155,7 @@ Output:
 
 Zero-byte input is a valid edge case and yields zero duration. A zero upload speed is invalid because the transfer cannot progress; it must not produce a finite duration.
 
-### 7.2 Required-speed mode
+### 7.3 Required-speed mode
 
 Inputs:
 - File size and unit.
@@ -154,7 +167,7 @@ Output:
 - Required effective payload throughput.
 - Clear statement of the assumed reduction.
 
-### 7.3 Maximum-size mode
+### 7.4 Maximum-size mode
 
 Inputs:
 - Nominal upload throughput and unit.
@@ -166,20 +179,20 @@ Output:
 - Human-friendly SI and IEC size representations.
 - Effective payload throughput and stated assumptions.
 
-### 7.4 Presets
+### 7.5 Presets
 
 Speed presets should be useful examples rather than claims about typical real-world plans. Proposed values: 1, 5, 10, 25, 50, 100, 500 Mbps and 1 Gbps.
 
 File-size presets should include representative sizes such as 100 MB, 500 MB, 1 GB, 5 GB, 10 GB, 25 GB, 50 GB, and 100 GB. Presets must be labelled clearly and must not overwrite unrelated fields.
 
-### 7.5 Results and sharing
+### 7.6 Results and sharing
 
 - Copy the result text to the clipboard.
 - Show a non-blocking success/failure message.
 - Shareable URLs, if implemented, must contain only calculator inputs and mode; do not encode private file names or user data.
 - On invalid or incomplete inputs, preserve user-entered values and focus or announce the relevant error.
 
-### 7.6 Simulation preview
+### 7.7 Simulation preview
 
 The simulation is a visualized estimate, not a real network transfer. It must never ask for a file or claim bytes were uploaded.
 
@@ -270,9 +283,9 @@ The framework decision is intentionally conservative: a small vanilla TypeScript
 
 ## 11. Current implementation status
 
-The first website implementation now includes the responsive one-page interface, all three calculator modes, SI/IEC conversion, throughput-reduction assumptions, result metrics, speed comparison, a time-scaled preview, copy/share actions, theme support, formula guidance, FAQ, and SEO assets. Pure calculation modules, unit tests, Playwright browser tests, GitHub Actions, and Vercel static build configuration are committed.
+The website implementation includes the responsive one-page interface, all three calculator modes, SI/IEC conversion, throughput-reduction assumptions, result metrics, speed comparison, a time-scaled preview, copy/share actions, theme support, formula guidance, FAQ, SEO assets, and an opt-in Cloudflare browser speed test with one-click upload-speed handoff. Pure calculation and speed-test adapter modules, unit tests, mocked Playwright browser tests, GitHub Actions, and Vercel static build configuration are committed. The speed-test integration is implemented in source; its external-provider behavior still needs CI/browser verification and live manual testing.
 
-The remaining release gates are dependency-backed CI execution, cross-browser/manual accessibility review, a production deployment smoke test, lockfile generation and commit, and the `v1.0.0` release. Code being present in `main` does not by itself mean it has been deployed or released.
+The remaining release gates are dependency-backed CI execution for the Cloudflare package and tests, cross-browser/manual accessibility review, speed-test validation against Cloudflare from real browsers/networks, a production deployment smoke test, lockfile generation and commit, and the `v1.0.0` release. Code being present in `main` does not by itself mean it has been deployed or released.
 
 ## 12. Definition of done
 

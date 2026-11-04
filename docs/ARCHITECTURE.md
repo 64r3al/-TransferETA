@@ -40,6 +40,7 @@ The UI does not duplicate the calculation formulas. Each mode calls the same cor
 ├── src/
 │   ├── core/
 │   │   ├── calculator.ts
+│   │   ├── speed-test.ts
 │   │   ├── format.ts
 │   │   └── units.ts
 │   ├── main.ts
@@ -47,12 +48,14 @@ The UI does not duplicate the calculation formulas. Each mode calls the same cor
 │   └── vite-env.d.ts
 ├── tests/
 │   ├── e2e/website.spec.ts
-│   └── unit/calculator.test.ts
+│   ├── unit/calculator.test.ts
+│   └── unit/speed-test.test.ts
 ├── docs/
 │   ├── PROJECT_PLAN.md
 │   ├── PROJECT_NOTEBOOK.md
 │   ├── ARCHITECTURE.md
 │   ├── CALCULATION_METHOD.md
+│   ├── SPEED_TEST_METHODOLOGY.md
 │   ├── QA_TEST_PLAN.md
 │   └── ROADMAP.md
 ├── .github/
@@ -95,6 +98,14 @@ The UI does not duplicate the calculation formulas. Each mode calls the same cor
 - Delegates size and rate formatting to the unit module.
 - Keeps presentation rounding separate from arithmetic.
 
+### `src/core/speed-test.ts`
+
+- Defines the bounded measurement plan for Cloudflare's official browser engine.
+- Disables the module's optional result and per-measurement logging endpoints.
+- Maps optional network measurement getters into a safe result model.
+- Converts a valid measured upload rate to an exact Mbps input string.
+- Contains no DOM or network execution code.
+
 ### `src/main.ts`
 
 - Owns selected mode and per-mode form drafts.
@@ -103,6 +114,7 @@ The UI does not duplicate the calculation formulas. Each mode calls the same cor
 - Renders results and comparison cards.
 - Builds and parses share URLs using an allowlist of modes and units.
 - Handles theme preference, clipboard actions, toast feedback, and the preview simulation.
+- Lazy-loads the speed-test package only after an explicit user action; supports progress, cancellation, partial results, and applying measured upload throughput to the upload-time calculator.
 
 ### `src/styles.css`
 
@@ -137,17 +149,23 @@ The domain contracts are declared in `src/core/calculator.ts`.
 - Show an error and invalidate the previous result when the current input set is invalid.
 - Never automatically move focus to the result.
 
-## 6. Simulation design
+## 6. Optional network speed test
+
+The test uses the official `@cloudflare/speedtest` browser engine against Cloudflare's edge network. It is loaded only after the visitor presses Start. The measurement plan is bounded (about 36.4 MB maximum payload), and the per-request and overall test timeouts prevent indefinitely long test runs. Packet loss is not enabled because the optional TURN test requires separate TURN infrastructure and credentials.
+
+`logAimApiUrl` and `logMeasurementApiUrl` are explicitly set to `null`; the optional Cloudflare results-logging endpoints are not used. Cloudflare still receives the actual measurement requests and their ordinary connection metadata. The app does not send the test result to a TransferETA server or persist it. A valid upload result is applied to the calculator only after the visitor chooses the Apply button.
+
+## 7. Simulation design
 
 The preview advances a mathematical elapsed-time value using `performance.now()` and `requestAnimationFrame`. Playback multipliers affect only preview time. The displayed nominal/effective network rate remains unchanged. The preview makes no network requests and does not access the File API.
 
-## 7. Build and deployment
+## 8. Build and deployment
 
 - Vite builds the static production bundle into `dist/`.
 - `vercel.json` declares Vite and the `dist` output directory.
 - The site requires no serverless functions, API routes, environment secrets, or runtime database.
 - The production URL must be smoke-tested before the first release.
 
-## 8. Dependency policy
+## 9. Dependency policy
 
-Runtime dependencies are intentionally zero. Development dependencies are limited to Vite, TypeScript, Vitest, and Playwright. Do not add a UI framework, icon package, analytics library, remote font, or backend without documenting the concrete benefit and cost.
+The application has one pinned runtime dependency: Cloudflare's `@cloudflare/speedtest` module, which is dynamically loaded only after an explicit user action. Development dependencies are limited to Vite, TypeScript, Vitest, and Playwright. Avoid additional runtime dependencies, analytics, remote fonts, or a backend unless the concrete benefit and cost are documented.

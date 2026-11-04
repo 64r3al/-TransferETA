@@ -69,7 +69,17 @@ The roadmap is phase-gated. Completed implementation milestones are recorded bel
 - FAQs and visible privacy statements.
 - Open Graph/Twitter metadata, WebApplication structured data, robots policy, and web manifest.
 
-## Phase 7 — Verification and release
+## Phase 7 — Network speed test integration
+
+**Status: Implemented in source; dependency-backed verification pending**
+
+- Added the opt-in Cloudflare browser speed test with bounded payload and timeout settings.
+- Added upload/download throughput, idle ping, jitter, progress, cancellation, and partial-result handling.
+- Added one-click application of measured upload throughput to the upload-time calculator.
+- Disabled the library's optional result-logging endpoints and documented external request metadata.
+- Added dedicated unit tests and mocked browser interaction coverage.
+
+## Phase 8 — Verification and release
 
 **Status: In progress**
 

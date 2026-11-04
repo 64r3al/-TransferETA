@@ -9,6 +9,13 @@ import {
   type UploadTimeResult,
 } from "./core/calculator";
 import { formatDuration, formatDurationClock } from "./core/format";
+import type CloudflareSpeedTest from "@cloudflare/speedtest";
+import {
+  measuredUploadToMbpsInput,
+  readNetworkSpeedMetrics,
+  SPEED_TEST_CONFIG,
+  type NetworkSpeedMetrics,
+} from "./core/speed-test";
 import {
   formatBytes,
   formatNumber,
@@ -85,6 +92,21 @@ const simulationSpeed = document.querySelector<HTMLSelectElement>("#simulation-s
 const comparisonGrid = document.querySelector<HTMLElement>("#comparison-grid")!;
 const comparisonCaption = document.querySelector<HTMLElement>("#comparison-caption")!;
 const toast = document.querySelector<HTMLElement>("#toast")!;
+const speedTestStart = document.querySelector<HTMLButtonElement>("#speed-test-start")!;
+const speedTestStartLabel = document.querySelector<HTMLElement>("#speed-test-start-label")!;
+const speedTestCancel = document.querySelector<HTMLButtonElement>("#speed-test-cancel")!;
+const speedTestStatus = document.querySelector<HTMLElement>("#speed-test-status")!;
+const speedTestBadge = document.querySelector<HTMLElement>("#speed-test-badge")!;
+const speedTestPhase = document.querySelector<HTMLElement>("#speed-test-phase")!;
+const speedTestPhaseCount = document.querySelector<HTMLElement>("#speed-test-phase-count")!;
+const speedTestProgress = document.querySelector<HTMLElement>("#speed-test-progress")!;
+const speedTestProgressFill = document.querySelector<HTMLElement>("#speed-test-progress-fill")!;
+const speedTestUpload = document.querySelector<HTMLElement>("#speed-test-upload")!;
+const speedTestDownload = document.querySelector<HTMLElement>("#speed-test-download")!;
+const speedTestPing = document.querySelector<HTMLElement>("#speed-test-ping")!;
+const speedTestJitter = document.querySelector<HTMLElement>("#speed-test-jitter")!;
+const speedTestExtra = document.querySelector<HTMLElement>("#speed-test-extra")!;
+const speedTestApply = document.querySelector<HTMLButtonElement>("#speed-test-apply")!;
 
 let mode: CalculatorMode = "upload-time";
 let lossPercent = 0;
@@ -97,6 +119,10 @@ let simulationElapsedBase = 0;
 let simulationStartedAt = 0;
 let simulationMultiplier = Number(simulationSpeed.value);
 let simulationDuration = 0;
+let speedTestEngine: InstanceType<typeof CloudflareSpeedTest> | null = null;
+let speedTestRunId = 0;
+let latestMeasuredUploadBitsPerSecond: number | null = null;
+let speedTestHadErrors = false;
 
 const drafts: Record<CalculatorMode, Draft> = {
   "upload-time": { ...DEFAULT_DRAFTS["upload-time"] },
@@ -503,8 +529,7 @@ async function copyText(text: string): Promise<boolean> {
   textarea.style.position = "fixed";
   textarea.style.opacity = "0";
   textarea.setAttribute("readonly", "");
-  document.body.append(textarea);
-  textarea.select();
+  document.body.append(textarea);  textarea.select();
   let copied = false;
   try { copied = document.execCommand("copy"); } catch { copied = false; }
   textarea.remove();
@@ -516,6 +541,187 @@ function showToast(message: string): void {
   toast.classList.add("is-visible");
   if (toastTimer !== undefined) window.clearTimeout(toastTimer);
   toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 2400);
+}
+
+function setSpeedTestStatus(message: string, state: "ready" | "running" | "complete" | "warning" | "cancelled"): void {
+  speedTestStatus.textContent = message;
+  speedTestBadge.dataset.state = state;
+  const labels = { ready: "READY", running: "TESTING", complete: "COMPLETE", warning: "PARTIAL", cancelled: "STOPPED" };
+  speedTestBadge.innerHTML = `<i></i> ${labels[state]}`;
+}
+
+function formatSpeedTestBandwidth(bitsPerSecond: number | null): string {
+  return bitsPerSecond !== null && bitsPerSecond > 0
+    ? formatNumber(bitsPerSecond / 1_000_000, 2)
+    : "—";
+}
+
+function formatSpeedTestLatency(milliseconds: number | null): string {
+  return milliseconds !== null && milliseconds >= 0
+    ? formatNumber(milliseconds, 1)
+    : "—";
+}
+
+function renderSpeedTestMetrics(metrics: NetworkSpeedMetrics, allowApply: boolean): void {
+  speedTestUpload.textContent = formatSpeedTestBandwidth(metrics.uploadBitsPerSecond);
+  speedTestDownload.textContent = formatSpeedTestBandwidth(metrics.downloadBitsPerSecond);
+  speedTestPing.textContent = formatSpeedTestLatency(metrics.idleLatencyMs);
+  speedTestJitter.textContent = formatSpeedTestLatency(metrics.idleJitterMs);
+  const loaded: string[] = [];
+  if (metrics.uploadLoadedLatencyMs !== null) loaded.push(`Upload latency under load: ${formatNumber(metrics.uploadLoadedLatencyMs, 1)} ms`);
+  if (metrics.downloadLoadedLatencyMs !== null) loaded.push(`Download latency under load: ${formatNumber(metrics.downloadLoadedLatencyMs, 1)} ms`);
+  if (metrics.durationMs !== null) loaded.push(`Test duration: ${formatNumber(metrics.durationMs / 1_000, 1)} sec`);
+  speedTestExtra.textContent = loaded.length > 0 ? loaded.join(" · ") : "Latency and throughput measurements will appear here.";
+  latestMeasuredUploadBitsPerSecond = allowApply && metrics.uploadBitsPerSecond !== null && metrics.uploadBitsPerSecond > 0
+    ? metrics.uploadBitsPerSecond
+    : null;
+  speedTestApply.disabled = latestMeasuredUploadBitsPerSecond === null;
+}
+
+function setSpeedTestPhase(index: number, type: string): void {
+  const count = SPEED_TEST_CONFIG.measurements?.length ?? 0;
+  const current = Math.min(index + 1, count);
+  const label = type === "latency"
+    ? "Measuring latency"
+    : type === "download"
+      ? "Measuring download throughput"
+      : type === "upload"
+        ? "Measuring upload throughput"
+        : "Checking connection";
+  speedTestPhase.textContent = label;
+  speedTestPhaseCount.textContent = `${current} / ${count} phases`;
+  speedTestProgress.setAttribute("aria-valuemax", String(count));
+  speedTestProgress.setAttribute("aria-valuenow", String(current));
+  speedTestProgressFill.style.width = `${count > 0 ? (current / count) * 100 : 0}%`;
+}
+
+async function startSpeedTest(): Promise<void> {
+  if (speedTestEngine?.isRunning) return;
+  const runId = ++speedTestRunId;
+  speedTestHadErrors = false;
+  latestMeasuredUploadBitsPerSecond = null;
+  speedTestApply.disabled = true;
+  speedTestUpload.textContent = "—";
+  speedTestDownload.textContent = "—";
+  speedTestPing.textContent = "—";
+  speedTestJitter.textContent = "—";
+  speedTestExtra.textContent = "Preparing a test against Cloudflare's edge network…";
+  speedTestPhase.textContent = "Loading measurement engine";
+  speedTestPhaseCount.textContent = `0 / ${SPEED_TEST_CONFIG.measurements?.length ?? 0} phases`;
+  speedTestProgress.setAttribute("aria-valuenow", "0");
+  speedTestProgressFill.style.width = "0%";
+  speedTestStart.disabled = true;
+  speedTestStartLabel.textContent = "Preparing test…";
+  speedTestCancel.hidden = false;
+  setSpeedTestStatus("Starting your speed test. Keep this tab open while measurements run.", "running");
+
+  try {
+    // Load the measurement engine only after the visitor explicitly opts in.
+    const { default: CloudflareSpeedTestConstructor } = await import("@cloudflare/speedtest");
+    if (runId !== speedTestRunId) return;
+    const engine = new CloudflareSpeedTestConstructor(SPEED_TEST_CONFIG);
+    speedTestEngine = engine;
+
+    engine.onPhaseChange = ({ measurementId, measurement }) => {
+      if (runId !== speedTestRunId) return;
+      setSpeedTestPhase(measurementId, measurement.type);
+    };
+
+    engine.onResultsChange = () => {
+      if (runId !== speedTestRunId) return;
+      renderSpeedTestMetrics(readNetworkSpeedMetrics(engine.results), false);
+    };
+
+    engine.onError = (_message, status) => {
+      if (runId !== speedTestRunId) return;
+      speedTestHadErrors = true;
+      const detail = status ? ` (HTTP ${status})` : "";
+      speedTestExtra.textContent = `Some measurements could not complete${detail}. The test will use any valid results it has collected.`;
+    };
+
+    engine.onRunningChange = (running) => {
+      if (runId !== speedTestRunId) return;
+      if (running) {
+        speedTestStartLabel.textContent = "Testing connection…";
+        speedTestStart.disabled = true;
+        speedTestCancel.hidden = false;
+      }
+    };
+
+    engine.onFinish = (results) => {
+      if (runId !== speedTestRunId) return;
+      speedTestEngine = null;
+      const metrics = readNetworkSpeedMetrics(results);
+      renderSpeedTestMetrics(metrics, true);
+      speedTestStart.disabled = false;
+      speedTestStartLabel.textContent = "Run test again";
+      speedTestCancel.hidden = true;
+      speedTestProgress.setAttribute("aria-valuenow", String(SPEED_TEST_CONFIG.measurements?.length ?? 8));
+      speedTestProgressFill.style.width = "100%";
+      speedTestPhase.textContent = "Measurements finished";
+      speedTestPhaseCount.textContent = `${SPEED_TEST_CONFIG.measurements?.length ?? 8} / ${SPEED_TEST_CONFIG.measurements?.length ?? 8} phases`;
+
+      if (metrics.uploadBitsPerSecond !== null && metrics.uploadBitsPerSecond > 0) {
+        setSpeedTestStatus(
+          speedTestHadErrors ? "Test finished with partial measurements. Your measured upload speed is available below." : "Speed test complete. Your measured upload speed is ready to use.",
+          speedTestHadErrors ? "warning" : "complete",
+        );
+      } else {
+        setSpeedTestStatus("The upload measurement was unavailable. You can retry, or enter an upload speed manually.", "warning");
+        speedTestExtra.textContent = "The connection or browser may have blocked the upload test. No upload speed was applied.";
+      }
+    };
+
+    engine.play();
+  } catch {
+    if (runId !== speedTestRunId) return;
+    speedTestEngine = null;
+    speedTestStart.disabled = false;
+    speedTestStartLabel.textContent = "Try speed test again";
+    speedTestCancel.hidden = true;
+    setSpeedTestStatus("The speed-test engine could not start. Check your connection and try again.", "warning");
+    speedTestExtra.textContent = "The measurement package could not be loaded. The manual calculator remains available.";
+  }
+}
+
+function cancelSpeedTest(): void {
+  // Also allow cancellation while the lazy-loaded engine is still downloading.
+  if (!speedTestEngine && !speedTestStart.disabled) return;
+  speedTestRunId += 1;
+  speedTestEngine?.pause();
+  speedTestEngine = null;
+  speedTestStart.disabled = false;
+  speedTestStartLabel.textContent = "Run speed test again";
+  speedTestCancel.hidden = true;
+  speedTestApply.disabled = true;
+  latestMeasuredUploadBitsPerSecond = null;
+  speedTestPhase.textContent = "Test stopped";
+  speedTestProgress.setAttribute("aria-valuenow", "0");
+  speedTestProgressFill.style.width = "0%";
+  setSpeedTestStatus("Test stopped. No result was applied to the calculator.", "cancelled");
+}
+
+function applyMeasuredUploadSpeed(): void {
+  if (latestMeasuredUploadBitsPerSecond === null) return;
+  const speedValue = measuredUploadToMbpsInput(latestMeasuredUploadBitsPerSecond);
+  if (speedValue === null) {
+    showToast("The measured upload speed is outside the supported range.");
+    return;
+  }
+  drafts["upload-time"] = {
+    ...drafts["upload-time"],
+    speed: speedValue,
+    speedUnit: "Mbps",
+  };
+  mode = "upload-time";
+  lossPercent = 0;
+  renderFields();
+  runCalculation();
+  document.querySelector<HTMLElement>("#calculator")?.scrollIntoView({
+    behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    block: "start",
+  });
+  showToast("Measured upload speed applied. Extra throughput reduction is set to 0% to avoid double-counting.");
 }
 
 function setTheme(theme: "light" | "dark", persist = true): void {
@@ -704,6 +910,10 @@ lossInput.addEventListener("change", () => {
   if (lastResult) runCalculation();
 });
 
+speedTestStart.addEventListener("click", () => { void startSpeedTest(); });
+speedTestCancel.addEventListener("click", cancelSpeedTest);
+speedTestApply.addEventListener("click", applyMeasuredUploadSpeed);
+
 document.querySelector<HTMLButtonElement>("#reset-button")!.addEventListener("click", resetCurrentForm);
 document.querySelector<HTMLButtonElement>("#theme-toggle")!.addEventListener("click", () => {
   const current = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
@@ -740,7 +950,12 @@ document.querySelector<HTMLButtonElement>("#share-result")!.addEventListener("cl
   showToast(success ? "Shareable estimate link copied." : "Could not copy the estimate link.");
 });
 
-window.addEventListener("beforeunload", stopSimulationFrame);
+window.addEventListener("beforeunload", () => {
+  stopSimulationFrame();
+  speedTestRunId += 1;
+  speedTestEngine?.pause();
+  speedTestEngine = null;
+});
 
 initializeTheme();
 loadFromUrl();

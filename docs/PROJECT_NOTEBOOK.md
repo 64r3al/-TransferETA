@@ -10,7 +10,7 @@ This notebook is the living engineering record for the project. It should be upd
 | Repository slug | `-TransferETA` |
 | Intended owner | `64r3al` |
 | Initial plan version | 1.0 |
-| Current status | Website implemented; verification and deployment pending |
+| Current status | Website and speed-test integration implemented; verification and deployment pending |
 | Baseline date | 2026-11-04 |
 | Planned first release | `v1.0.0` |
 
@@ -20,7 +20,7 @@ This notebook is the living engineering record for the project. It should be upd
 - Support SI and IEC units without conflating them.
 - Make bit/byte distinctions explicit.
 - Support upload-time, required-speed, and maximum-size modes.
-- Keep all calculations local to the browser.
+- Keep calculator arithmetic local to the browser; disclose the external provider used for opt-in network measurements.
 - Build an original, polished, responsive, accessible interface.
 - Maintain high confidence through deterministic tests and documented assumptions.
 
@@ -56,6 +56,14 @@ This notebook is the living engineering record for the project. It should be upd
 
 **Reason:** The project should have its own identity and maintainable implementation.
 
+### Decision 006 — Opt-in Cloudflare speed-test integration
+
+**Decision:** Use the official `@cloudflare/speedtest` browser engine, dynamically loaded only after a visitor presses Start. Apply only the returned upload throughput to the upload-time calculator, and set additional throughput reduction to 0% when applying a measured rate.
+
+**Privacy controls:** Explicitly set `logAimApiUrl: null` and `logMeasurementApiUrl: null` to disable the package's optional result-logging endpoints. Disclose that test requests go to Cloudflare and expose normal request metadata, including IP address. Do not persist the speed-test result in TransferETA.
+
+**Reason:** A real browser speed test needs a measurement endpoint on the other side of the connection. Cloudflare provides an established browser measurement engine and edge endpoints without requiring TransferETA to operate a bandwidth server. The provider and data flow must be visible to the visitor.
+
 ## 3. Phase log
 
 ### 2026-11-04 — Planning baseline
@@ -79,6 +87,15 @@ This notebook is the living engineering record for the project. It should be upd
 - Local TypeScript source check passed using the available compiler (TypeScript 5.8.3); 10 direct Node-based calculation smoke checks passed.
 - Full Vite/Vitest/Playwright install and execution could not be performed in this environment because DNS resolution for `registry.npmjs.org` failed. The CI workflow is configured to execute those checks in GitHub's runner.
 - Production deployment and release tag have not been created yet.
+
+### 2026-11-04 — Browser speed-test integration
+
+- Added an opt-in, lazy-loaded integration with Cloudflare's official `@cloudflare/speedtest` package (pinned to 1.16.0).
+- Added bounded download/upload/latency measurements with a maximum configured payload of 36.4 MB, 10-second per-request aborts, and a 45-second test cap.
+- Added live speed, ping, jitter, loaded-latency, phase-progress, stop/retry, and partial-result UI.
+- Added a one-click action that applies only the measured upload rate in Mbps and sets extra throughput reduction to 0%.
+- Explicitly disabled Cloudflare's optional result-logging endpoints and added clear provider/IP metadata disclosure.
+- Added adapter unit tests and mocked browser tests; dependency-backed CI still needs to run against the pinned package.
 
 ## 4. Defect and issue log
 

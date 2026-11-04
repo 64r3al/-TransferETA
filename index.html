@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f5f7fc" />
-    <meta name="description" content="Estimate upload time, find the upload speed you need, or see how much data you can transfer. A fast, private calculator with clear units and transparent assumptions." />
+    <meta name="description" content="Test your real upload and download speed, then use your measured upload throughput in a precise, private file transfer time calculator." />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="TransferETA — Upload time, without the guesswork" />
     <meta property="og:description" content="Estimate file transfer time with clear units, transparent assumptions, and a beautifully simple calculator." />
@@ -40,6 +40,7 @@
         </a>
 
         <nav class="header-nav" aria-label="Main navigation">
+          <a href="#speed-test">Speed test</a>
           <a href="#calculator">Calculator</a>
           <a href="#how-it-works">How it works</a>
           <a href="#faq">FAQ</a>
@@ -79,6 +80,73 @@
           <div class="visual-route"><span class="route-dot"></span><span class="route-line"></span><span class="route-arrow">↗</span></div>
           <div class="visual-speed-card"><span class="speed-label">TRANSFER RATE</span><strong>100 <small>Mbps</small></strong><span class="speed-sub"><i></i> Connection estimate</span></div>
           <div class="visual-caption"><span class="caption-icon">↗</span><span>From file to done.<br /><b>Plan with confidence.</b></span></div>
+        </div>
+      </section>
+
+      <section class="speed-test-section section-wrap" id="speed-test" aria-labelledby="speed-test-title">
+        <div class="section-heading speed-test-heading">
+          <div>
+            <span class="section-kicker">MEASURE YOUR CONNECTION</span>
+            <h2 id="speed-test-title">Test first. Estimate with real data.</h2>
+          </div>
+          <p>Measure this device's current connection, then send the measured upload speed straight to the calculator.</p>
+        </div>
+
+        <div class="speed-test-card">
+          <div class="speed-test-topline">
+            <div class="speed-test-provider">
+              <span class="speed-test-provider-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12h16M12 4v16M6.3 6.3l11.4 11.4m0-11.4L6.3 17.7"/></svg></span>
+              <div><strong>Internet speed test</strong><span>Browser-based · Cloudflare edge network</span></div>
+            </div>
+            <span class="speed-test-badge" id="speed-test-badge"><i></i> READY</span>
+          </div>
+
+          <div class="speed-test-main">
+            <div class="speed-test-intro">
+              <p id="speed-test-status" role="status" aria-live="polite">Ready when you are. The test starts only when you press the button.</p>
+              <div class="speed-test-phase-row">
+                <span id="speed-test-phase">Waiting to start</span>
+                <span id="speed-test-phase-count">0 / 8 phases</span>
+              </div>
+              <div class="speed-test-progress" id="speed-test-progress" role="progressbar" aria-label="Speed test progress" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0">
+                <span id="speed-test-progress-fill"></span>
+              </div>
+              <div class="speed-test-actions">
+                <button class="speed-test-start" id="speed-test-start" type="button"><span class="speed-test-play-icon" aria-hidden="true">▶</span><span id="speed-test-start-label">Start speed test</span></button>
+                <button class="speed-test-cancel" id="speed-test-cancel" type="button" hidden>Stop test</button>
+              </div>
+              <p class="speed-test-hint">Often takes a few to a few dozen seconds; capped at 45 seconds. Uses up to about 37 MB of test traffic, depending on connection speed.</p>
+            </div>
+
+            <div class="speed-test-results" aria-label="Speed test results">
+              <div class="speed-test-metric speed-test-upload">
+                <span class="speed-test-metric-label"><i></i> Upload</span>
+                <strong id="speed-test-upload">—</strong>
+                <small>Mbps</small>
+              </div>
+              <div class="speed-test-metric">
+                <span class="speed-test-metric-label"><i></i> Download</span>
+                <strong id="speed-test-download">—</strong>
+                <small>Mbps</small>
+              </div>
+              <div class="speed-test-metric">
+                <span class="speed-test-metric-label"><i></i> Ping</span>
+                <strong id="speed-test-ping">—</strong>
+                <small>ms · idle latency</small>
+              </div>
+              <div class="speed-test-metric">
+                <span class="speed-test-metric-label"><i></i> Jitter</span>
+                <strong id="speed-test-jitter">—</strong>
+                <small>ms · variation</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="speed-test-result-footer">
+            <div class="speed-test-extra" id="speed-test-extra">Run the test to see your connection measurements.</div>
+            <button class="speed-test-apply" id="speed-test-apply" type="button" disabled><span>Use measured upload speed</span><b aria-hidden="true">→</b></button>
+          </div>
+          <p class="speed-test-disclosure"><strong>Privacy &amp; measurement:</strong> Starting the test sends small download and upload samples to Cloudflare's edge network. Cloudflare can see normal request metadata, including your IP address. TransferETA disables the library's optional result-logging endpoints and does not store your test history. The measured rate is a snapshot of this device's route to Cloudflare, not a guarantee from your ISP. <a href="https://github.com/cloudflare/speedtest" target="_blank" rel="noreferrer">About the measurement engine ↗</a></p>
         </div>
       </section>
 

@@ -12,7 +12,6 @@ A pull request must pass:
 6. End-to-end browser tests for core flows.
 
 The release candidate must additionally pass responsive, accessibility, privacy, and deployed-site smoke checks.
-
 ## 2. Unit test coverage
 
 ### Conversion tests
@@ -41,7 +40,21 @@ The release candidate must additionally pass responsive, accessibility, privacy,
 - Rounding boundaries.
 - Large values and overflow guards.
 
-## 3. Browser-level tests
+## 3. Speed-test tests
+
+- The external measurement engine is not loaded and no request to Cloudflare is made on page load.
+- The engine is loaded only after the visitor explicitly starts the test.
+- The test can be cancelled and can be run again.
+- Progress phases are announced and the interface remains usable during the test.
+- Missing upload or download measurements do not crash the interface.
+- Partial measurement failures are disclosed rather than presented as a full success.
+- The apply action remains disabled until a valid upload result is available.
+- Only upload throughput (never download throughput) is copied into upload-time mode.
+- Applying a measured speed sets additional throughput reduction to 0%.
+- Cloudflare optional result-logging endpoints remain disabled.
+- E2E tests mock the external endpoints and do not consume real bandwidth.
+
+## 4. Browser-level tests
 
 - User can calculate an upload estimate.
 - User can switch between all three calculator modes.
@@ -55,7 +68,7 @@ The release candidate must additionally pass responsive, accessibility, privacy,
 - Simulation never requests a file or triggers network transfer.
 - Share URL parameters, if shipped, are validated before use.
 
-## 4. Responsive checks
+## 5. Responsive checks
 
 Test at representative viewport sizes, including:
 
@@ -72,7 +85,7 @@ Acceptance:
 - Text remains readable at 200% zoom.
 - Focus indicators remain visible.
 
-## 5. Accessibility checks
+## 6. Accessibility checks
 
 - Keyboard-only completion of every core calculator task.
 - Logical focus order.
@@ -84,7 +97,7 @@ Acceptance:
 - Reduced-motion preference respected.
 - Automated checks supplemented by manual keyboard and screen-reader review.
 
-## 6. Privacy and security checks
+## 7. Privacy and security checks
 
 - No file upload control or file read API is used.
 - No unexpected external network requests from the application.
@@ -94,7 +107,7 @@ Acceptance:
 - Dependency audit is reviewed before release.
 - Theme persistence stores no sensitive calculator data.
 
-## 7. Performance checks
+## 8. Performance checks
 
 Record initial build size and page-load baseline after the first implementation. Set a practical production bundle budget based on that baseline. Check:
 
@@ -106,7 +119,7 @@ Record initial build size and page-load baseline after the first implementation.
 
 A small calculator should not require a large runtime bundle. Any material budget increase must be explained in the pull request.
 
-## 8. Release checklist
+## 9. Release checklist
 
 - [ ] All P0 unit tests pass.
 - [ ] All three calculation modes pass browser tests.
@@ -124,9 +137,9 @@ A small calculator should not require a large runtime bundle. Any material budge
 - [ ] Changelog and release tag are prepared.
 
 
-## 9. Current verification record
+## 10. Current verification record
 
 - Strict TypeScript application source check completed successfully using the compiler available in the build environment (TypeScript 5.8.3).
 - Ten direct Node-based calculation smoke checks passed, covering SI/IEC conversion, bit/byte conversion, upload time, throughput reduction, maximum-size calculation, required-speed calculation, formatting, and invalid speed.
-- Vitest and Playwright test suites are committed but have not yet been executed in this environment because DNS resolution for the npm registry failed. GitHub Actions is configured to install dependencies and execute both test suites.
+- The speed-test adapter has been type-checked against a temporary declaration stub matching Cloudflare's published public API; the actual pinned package has not yet been installed in this environment because DNS resolution for the npm registry is unavailable. GitHub Actions is configured to install dependencies and perform the authoritative typecheck, Vitest suite, Playwright suite, and build.
 - A production build and deployed-site smoke test remain release gates.

@@ -38,7 +38,8 @@
   --ink: #eff3ff;
   --ink-soft: #c0cbe0;
   --muted: #8e9ab2;
-  --line: #283853;  --line-strong: #354765;
+  --line: #283853;
+  --line-strong: #354765;
   --brand: #7290ff;
   --brand-strong: #91a7ff;
   --brand-soft: #1c2a4b;
@@ -456,4 +457,89 @@ h1, h2, h3, p { margin-top: 0; }
 @media (max-width: 760px) {
   .result-content[data-mode="required-speed"] .result-hero-value,
   .result-content[data-mode="maximum-size"] .result-hero-value { font-size: 36px; }
+}
+
+
+/* Network speed tester */
+.speed-test-section { padding-top: 12px; padding-bottom: 50px; }
+.speed-test-heading > p { max-width: 400px; margin: 0 0 2px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.speed-test-card { padding: 25px 28px 19px; border: 1px solid var(--line); border-radius: var(--radius-xl); background: var(--surface); box-shadow: var(--shadow-soft); }
+.speed-test-topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 19px; border-bottom: 1px solid var(--line); }
+.speed-test-provider { display: flex; align-items: center; gap: 12px; }
+.speed-test-provider-mark { display: grid; width: 40px; height: 40px; place-items: center; border-radius: 12px; color: var(--brand); background: var(--brand-soft); }
+.speed-test-provider-mark svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.speed-test-provider div { display: grid; gap: 4px; }
+.speed-test-provider strong { color: var(--ink); font-size: 13px; letter-spacing: -.2px; }
+.speed-test-provider div span { color: var(--muted); font-size: 10px; }
+.speed-test-badge { display: inline-flex; align-items: center; gap: 7px; padding: 7px 9px; border-radius: 7px; background: var(--surface-muted); color: var(--ink-soft); font-size: 8px; font-weight: 850; letter-spacing: 1px; white-space: nowrap; }
+.speed-test-badge i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+.speed-test-badge[data-state="running"] { background: var(--brand-soft); color: var(--brand); }
+.speed-test-badge[data-state="running"] i { background: var(--brand); box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 13%, transparent); animation: speed-test-pulse 1.2s ease-in-out infinite; }
+.speed-test-badge[data-state="complete"] { background: var(--green-soft); color: #168b65; }
+.speed-test-badge[data-state="complete"] i { background: var(--green); }
+.speed-test-badge[data-state="warning"] { background: #fff4e5; color: #a76511; }
+:root[data-theme="dark"] .speed-test-badge[data-state="warning"] { background: #3a2c1b; color: #f1bd73; }
+.speed-test-badge[data-state="warning"] i { background: #df9a36; }
+.speed-test-badge[data-state="cancelled"] { background: var(--surface-muted); color: var(--muted); }
+.speed-test-badge[data-state="cancelled"] i { background: var(--muted); }
+.speed-test-main { display: grid; grid-template-columns: minmax(250px, .85fr) minmax(0, 1.15fr); gap: 34px; align-items: center; padding: 25px 0 23px; }
+.speed-test-intro { min-width: 0; }
+.speed-test-intro > p { min-height: 42px; margin: 0 0 17px; color: var(--ink-soft); font-size: 11px; line-height: 1.7; }
+.speed-test-phase-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; color: var(--muted); font-size: 9px; }
+.speed-test-phase-row span:last-child { font-variant-numeric: tabular-nums; }
+.speed-test-progress { height: 7px; overflow: hidden; border-radius: 99px; background: var(--surface-muted); }
+.speed-test-progress span { display: block; width: 0%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--brand), var(--green)); transition: width .25s ease; }
+.speed-test-actions { display: flex; align-items: center; gap: 10px; margin-top: 17px; }
+.speed-test-start, .speed-test-cancel, .speed-test-apply { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 41px; border: 0; border-radius: 10px; font-size: 10px; font-weight: 760; transition: transform .2s ease, opacity .2s ease, background .2s ease; }
+.speed-test-start { padding: 0 17px; background: var(--brand); color: #fff; box-shadow: 0 7px 15px color-mix(in srgb, var(--brand) 22%, transparent); }
+.speed-test-start:hover:not(:disabled), .speed-test-apply:hover:not(:disabled) { transform: translateY(-1px); }
+.speed-test-start:disabled, .speed-test-apply:disabled { cursor: not-allowed; opacity: .45; box-shadow: none; }
+.speed-test-play-icon { font-size: 9px; }
+.speed-test-cancel { padding: 0 14px; border: 1px solid var(--line-strong); color: var(--ink-soft); background: var(--surface); }
+.speed-test-cancel:hover { border-color: var(--brand); color: var(--brand); }
+.speed-test-hint { margin: 11px 0 0; color: var(--muted); font-size: 8px; line-height: 1.6; }
+.speed-test-results { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; }
+.speed-test-metric { min-width: 0; min-height: 107px; padding: 15px 12px 12px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface-soft); display: flex; flex-direction: column; justify-content: center; }
+.speed-test-metric-label { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 12px; color: var(--muted); font-size: 9px; font-weight: 650; }
+.speed-test-metric-label i { width: 6px; height: 6px; border-radius: 50%; background: var(--line-strong); }
+.speed-test-upload .speed-test-metric-label i { background: var(--green); }
+.speed-test-metric strong { color: var(--ink); font-size: clamp(19px, 2.1vw, 27px); font-weight: 790; line-height: 1; letter-spacing: -1px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.speed-test-metric small { margin-top: 7px; color: var(--muted); font-size: 8px; }
+.speed-test-result-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 54px; padding-top: 16px; border-top: 1px solid var(--line); }
+.speed-test-extra { min-width: 0; color: var(--muted); font-size: 9px; line-height: 1.6; }
+.speed-test-apply { flex: none; padding: 0 14px; border: 1px solid color-mix(in srgb, var(--green) 34%, var(--line)); color: #15845f; background: var(--green-soft); }
+:root[data-theme="dark"] .speed-test-apply { color: #75e2bb; }
+.speed-test-apply b { font-size: 15px; font-weight: 600; }
+.speed-test-disclosure { max-width: 940px; margin: 15px 0 0; color: var(--muted); font-size: 8px; line-height: 1.7; }
+.speed-test-disclosure strong { color: var(--ink-soft); font-weight: 740; }
+.speed-test-disclosure a { color: var(--brand); font-weight: 700; }
+.speed-test-disclosure a:hover { text-decoration: underline; }
+@keyframes speed-test-pulse { 50% { opacity: .45; box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 8%, transparent); } }
+
+@media (max-width: 980px) {
+  .header-nav { gap: 19px; margin-right: 16px; }
+  .speed-test-main { grid-template-columns: 1fr; gap: 22px; }
+  .speed-test-intro > p { min-height: 0; }
+}
+@media (max-width: 760px) {
+  .speed-test-section { padding-top: 4px; padding-bottom: 38px; }
+  .speed-test-heading { align-items: flex-start; flex-direction: column; gap: 9px; }
+  .speed-test-heading > p { max-width: 520px; }
+  .speed-test-card { padding: 19px 17px 16px; }
+  .speed-test-results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .speed-test-result-footer { align-items: stretch; flex-direction: column; gap: 12px; }
+  .speed-test-apply { width: 100%; }
+}
+@media (max-width: 600px) {
+  .header-nav { gap: 12px; margin-right: 12px; }
+  .header-nav a { font-size: 10px; }
+  .header-nav a:nth-child(3) { display: none; }
+  .header-nav .github-link { display: none; }
+  .speed-test-main { padding-block: 18px; }
+  .speed-test-provider div span { font-size: 8px; }
+  .speed-test-badge { padding: 6px 7px; font-size: 7px; }
+  .speed-test-intro > p { margin-bottom: 14px; }
+  .speed-test-start, .speed-test-cancel { min-height: 39px; }
+  .speed-test-metric { min-height: 95px; padding: 12px 10px; }
+  .speed-test-metric strong { font-size: 22px; }
 }
