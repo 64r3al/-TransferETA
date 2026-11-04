@@ -6,7 +6,7 @@
 **Product name:** TransferETA (working name; branding and trademark clearance are separate checks)  
 **Repository slug:** `-TransferETA`  
 **Initial release target:** `v1.0.0`  
-**Implementation status:** First website implementation committed; automated CI and deployment verification pending
+**Implementation status:** First website and opt-in browser speed test committed; GitHub Actions checks passed; production deployment pending
 
 ---
 
@@ -100,7 +100,8 @@ Give users a dependable answer to a simple question—“How long will this uplo
 ### Explicitly out of scope for v1.0
 
 - Actual file transfer or cloud storage.
-- Speed testing or measuring a user's network.
+- Continuous network monitoring or background speed measurement.
+- ISP certification or guaranteed speed predictions.
 - Accounts, user profiles, or server-side history.
 - Ads, tracking pixels, or analytics by default.
 - Download scheduling or background transfer management.
