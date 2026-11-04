@@ -141,5 +141,6 @@ A small calculator should not require a large runtime bundle. Any material budge
 
 - Strict TypeScript application source check completed successfully using the compiler available in the build environment (TypeScript 5.8.3).
 - Ten direct Node-based calculation smoke checks passed, covering SI/IEC conversion, bit/byte conversion, upload time, throughput reduction, maximum-size calculation, required-speed calculation, formatting, and invalid speed.
-- The speed-test adapter has been type-checked against a temporary declaration stub matching Cloudflare's published public API; the actual pinned package has not yet been installed in this environment because DNS resolution for the npm registry is unavailable. GitHub Actions is configured to install dependencies and perform the authoritative typecheck, Vitest suite, Playwright suite, and build.
-- A production build and deployed-site smoke test remain release gates.
+- GitHub Actions run [#41925404476](https://github.com/64r3al/-TransferETA/actions/runs/41925404476) completed successfully for commit `6c957f3`: dependency installation, strict TypeScript typecheck, Vitest unit tests (including speed-test configuration/result mapping), production build, Playwright Chromium installation, and Playwright browser interaction tests all passed.
+- The speed-test browser test intercepts Cloudflare endpoints with mocked responses; CI does not run a real bandwidth test or send measurement traffic to Cloudflare.
+- A production deployment and deployed-site smoke test remain release gates.
