@@ -14,6 +14,7 @@ import {
   measuredUploadToMbpsInput,
   readNetworkSpeedMetrics,
   SPEED_TEST_CONFIG,
+  summarizeBandwidthSamples,
   type NetworkSpeedMetrics,
 } from "./core/speed-test";
 import {
@@ -105,6 +106,9 @@ const speedTestUpload = document.querySelector<HTMLElement>("#speed-test-upload"
 const speedTestDownload = document.querySelector<HTMLElement>("#speed-test-download")!;
 const speedTestPing = document.querySelector<HTMLElement>("#speed-test-ping")!;
 const speedTestJitter = document.querySelector<HTMLElement>("#speed-test-jitter")!;
+const speedTestChart = document.querySelector<HTMLDivElement>("#speed-test-chart")!;
+const speedTestQuality = document.querySelector<HTMLElement>("#speed-test-quality")!;
+const speedTestSampleCounts = document.querySelector<HTMLElement>("#speed-test-sample-counts")!;
 const speedTestExtra = document.querySelector<HTMLElement>("#speed-test-extra")!;
 const speedTestApply = document.querySelector<HTMLButtonElement>("#speed-test-apply")!;
 
@@ -562,14 +566,87 @@ function formatSpeedTestLatency(milliseconds: number | null): string {
     : "—";
 }
 
+function renderSpeedTestChart(uploadSamples: readonly number[], downloadSamples: readonly number[]): void {
+  const width = 640;
+  const top = 12;
+  const bottom = 112;
+  const left = 20;
+  const right = 620;
+  const maximum = Math.max(1, ...uploadSamples, ...downloadSamples);
+  const coordinates = (samples: readonly number[]) => samples.map((value, index) => {
+    const x = samples.length <= 1
+      ? (left + right) / 2
+      : left + (index / (samples.length - 1)) * (right - left);
+    const y = bottom - (value / maximum) * (bottom - top);
+    return { x, y };
+  });
+  const upload = coordinates(uploadSamples);
+  const download = coordinates(downloadSamples);
+  const pathFor = (points: readonly { x: number; y: number }[]) =>
+    points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(" ");
+  const dotsFor = (points: readonly { x: number; y: number }[], kind: string) =>
+    points.map((point) =>
+      `<circle class="speed-chart-dot ${kind}" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="3.4" />`,
+    ).join("");
+
+  speedTestChart.innerHTML = `<svg viewBox="0 0 ${width} 128" preserveAspectRatio="none" aria-hidden="true">
+    <g class="speed-chart-grid">
+      <path d="M${left} 12H${right} M${left} 45H${right} M${left} 78H${right} M${left} 112H${right}" />
+    </g>
+    ${upload.length > 1 ? `<path class="speed-chart-area speed-chart-upload-area" d="${pathFor(upload)} L${right} ${bottom} L${left} ${bottom} Z" />` : ""}
+    ${download.length > 1 ? `<path class="speed-chart-area speed-chart-download-area" d="${pathFor(download)} L${right} ${bottom} L${left} ${bottom} Z" />` : ""}
+    ${upload.length > 0 ? `<path class="speed-chart-line speed-chart-upload-line" d="${pathFor(upload)}" />` : ""}
+    ${download.length > 0 ? `<path class="speed-chart-line speed-chart-download-line" d="${pathFor(download)}" />` : ""}
+    ${dotsFor(upload, "speed-chart-upload-dot")}
+    ${dotsFor(download, "speed-chart-download-dot")}
+  </svg>`;
+  speedTestChart.setAttribute(
+    "aria-label",
+    `Throughput samples in test order. ${uploadSamples.length} upload samples and ${downloadSamples.length} download samples.`,
+  );
+}
+
+function updateSpeedTestConsistency(metrics: NetworkSpeedMetrics, isFinal: boolean): void {
+  const uploadSummary = summarizeBandwidthSamples(metrics.uploadSamples);
+  const downloadSummary = summarizeBandwidthSamples(metrics.downloadSamples);
+  speedTestSampleCounts.textContent =
+    `Upload: ${uploadSummary.sampleCount} · Download: ${downloadSummary.sampleCount} valid samples`;
+
+  const spreads = [metrics.uploadSpreadPercent, metrics.downloadSpreadPercent]
+    .filter((value): value is number => value !== null && Number.isFinite(value));
+  if (spreads.length === 0) {
+    speedTestQuality.textContent = isFinal ? "Limited sample count" : "Gathering samples…";
+    speedTestQuality.dataset.quality = "waiting";
+    return;
+  }
+
+  const largestSpread = Math.max(...spreads);
+  const spreadLabel = `${formatNumber(largestSpread, 0)}% p10–p90 spread`;
+  if (largestSpread <= 15) {
+    speedTestQuality.textContent = `Consistent · ${spreadLabel}`;
+    speedTestQuality.dataset.quality = "steady";
+  } else if (largestSpread <= 30) {
+    speedTestQuality.textContent = `Some variation · ${spreadLabel}`;
+    speedTestQuality.dataset.quality = "mixed";
+  } else {
+    speedTestQuality.textContent = `Variable · ${spreadLabel}`;
+    speedTestQuality.dataset.quality = "variable";
+  }
+}
+
 function renderSpeedTestMetrics(metrics: NetworkSpeedMetrics, allowApply: boolean): void {
   speedTestUpload.textContent = formatSpeedTestBandwidth(metrics.uploadBitsPerSecond);
   speedTestDownload.textContent = formatSpeedTestBandwidth(metrics.downloadBitsPerSecond);
   speedTestPing.textContent = formatSpeedTestLatency(metrics.idleLatencyMs);
   speedTestJitter.textContent = formatSpeedTestLatency(metrics.idleJitterMs);
+  renderSpeedTestChart(metrics.uploadSamples, metrics.downloadSamples);
+  updateSpeedTestConsistency(metrics, allowApply);
+
   const loaded: string[] = [];
   if (metrics.uploadLoadedLatencyMs !== null) loaded.push(`Upload latency under load: ${formatNumber(metrics.uploadLoadedLatencyMs, 1)} ms`);
   if (metrics.downloadLoadedLatencyMs !== null) loaded.push(`Download latency under load: ${formatNumber(metrics.downloadLoadedLatencyMs, 1)} ms`);
+  if (metrics.uploadLoadedJitterMs !== null) loaded.push(`Upload loaded jitter: ${formatNumber(metrics.uploadLoadedJitterMs, 1)} ms`);
+  if (metrics.downloadLoadedJitterMs !== null) loaded.push(`Download loaded jitter: ${formatNumber(metrics.downloadLoadedJitterMs, 1)} ms`);
   if (metrics.durationMs !== null) loaded.push(`Test duration: ${formatNumber(metrics.durationMs / 1_000, 1)} sec`);
   speedTestExtra.textContent = loaded.length > 0 ? loaded.join(" · ") : "Latency and throughput measurements will appear here.";
   latestMeasuredUploadBitsPerSecond = allowApply && metrics.uploadBitsPerSecond !== null && metrics.uploadBitsPerSecond > 0
@@ -605,7 +682,11 @@ async function startSpeedTest(): Promise<void> {
   speedTestDownload.textContent = "—";
   speedTestPing.textContent = "—";
   speedTestJitter.textContent = "—";
-  speedTestExtra.textContent = "Preparing a test against Cloudflare's edge network…";
+  renderSpeedTestChart([], []);
+  speedTestQuality.textContent = "Gathering samples…";
+  speedTestQuality.dataset.quality = "waiting";
+  speedTestSampleCounts.textContent = "Upload: 0 · Download: 0 valid samples";
+  speedTestExtra.textContent = "Preparing the precision measurement against Cloudflare's edge network…";
   speedTestPhase.textContent = "Loading measurement engine";
   speedTestPhaseCount.textContent = `0 / ${SPEED_TEST_CONFIG.measurements?.length ?? 0} phases`;
   speedTestProgress.setAttribute("aria-valuenow", "0");
@@ -613,7 +694,7 @@ async function startSpeedTest(): Promise<void> {
   speedTestStart.disabled = true;
   speedTestStartLabel.textContent = "Preparing test…";
   speedTestCancel.hidden = false;
-  setSpeedTestStatus("Starting your speed test. Keep this tab open while measurements run.", "running");
+  setSpeedTestStatus("Starting the enhanced test. Multiple requests are measured in each direction; keep this tab open.", "running");
 
   try {
     // Load the measurement engine only after the visitor explicitly opts in.
@@ -668,7 +749,7 @@ async function startSpeedTest(): Promise<void> {
         );
       } else {
         setSpeedTestStatus("The upload measurement was unavailable. You can retry, or enter an upload speed manually.", "warning");
-        speedTestExtra.textContent = "The connection or browser may have blocked the upload test. No upload speed was applied.";
+        speedTestExtra.textContent = "The connection or browser may have blocked the upload test. No upload speed was applied. Retry on a stable connection, or enter a speed manually.";
       }
     };
 
@@ -957,7 +1038,29 @@ window.addEventListener("beforeunload", () => {
   speedTestEngine = null;
 });
 
+function initializeScrollReveals(): void {
+  const elements = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+  if (elements.length === 0 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  if (!("IntersectionObserver" in window)) {
+    elements.forEach((element) => element.classList.add("is-visible"));
+    return;
+  }
+
+  document.documentElement.classList.add("motion-enabled");
+  const observer = new IntersectionObserver((entries, activeObserver) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("is-visible");
+      activeObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -5% 0px" });
+
+  elements.forEach((element) => observer.observe(element));
+}
+
 initializeTheme();
+initializeScrollReveals();
 loadFromUrl();
 renderFields();
 runCalculation();

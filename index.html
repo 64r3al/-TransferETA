@@ -59,7 +59,7 @@
 
     <main id="main">
       <section class="hero section-wrap" id="top">
-        <div class="hero-copy">
+        <div class="hero-copy" data-reveal>
           <div class="eyebrow"><span class="eyebrow-dot"></span> A clearer way to plan your uploads</div>
           <h1>Your next upload,<br /><span>without the guesswork.</span></h1>
           <p class="hero-lede">Know how long your files will take to move. Get a useful estimate in seconds, with the math and assumptions kept clear.</p>
@@ -69,7 +69,7 @@
             <span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5.5h14M3 10h14M3 14.5h9"/></svg> No file upload needed</span>
           </div>
         </div>
-        <div class="hero-visual" role="img" aria-label="Illustration showing a file moving through a transfer progress path">
+        <div class="hero-visual" data-reveal style="--reveal-delay: 120ms" role="img" aria-label="Illustration showing a file moving through a transfer progress path">
           <div class="visual-orbit orbit-one"></div>
           <div class="visual-orbit orbit-two"></div>
           <div class="visual-file-card">
@@ -84,7 +84,7 @@
       </section>
 
       <section class="speed-test-section section-wrap" id="speed-test" aria-labelledby="speed-test-title">
-        <div class="section-heading speed-test-heading">
+        <div class="section-heading speed-test-heading" data-reveal>
           <div>
             <span class="section-kicker">MEASURE YOUR CONNECTION</span>
             <h2 id="speed-test-title">Test first. Estimate with real data.</h2>
@@ -92,11 +92,11 @@
           <p>Measure this device's current connection, then send the measured upload speed straight to the calculator.</p>
         </div>
 
-        <div class="speed-test-card">
+        <div class="speed-test-card" data-reveal>
           <div class="speed-test-topline">
             <div class="speed-test-provider">
               <span class="speed-test-provider-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12h16M12 4v16M6.3 6.3l11.4 11.4m0-11.4L6.3 17.7"/></svg></span>
-              <div><strong>Internet speed test</strong><span>Browser-based · Cloudflare edge network</span></div>
+              <div><strong>Internet speed test</strong><span>Cloudflare edge · repeated samples · median results</span></div>
             </div>
             <span class="speed-test-badge" id="speed-test-badge"><i></i> READY</span>
           </div>
@@ -106,7 +106,7 @@
               <p id="speed-test-status" role="status" aria-live="polite">Ready when you are. The test starts only when you press the button.</p>
               <div class="speed-test-phase-row">
                 <span id="speed-test-phase">Waiting to start</span>
-                <span id="speed-test-phase-count">0 / 8 phases</span>
+                <span id="speed-test-phase-count">0 / 9 phases</span>
               </div>
               <div class="speed-test-progress" id="speed-test-progress" role="progressbar" aria-label="Speed test progress" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0">
                 <span id="speed-test-progress-fill"></span>
@@ -115,17 +115,17 @@
                 <button class="speed-test-start" id="speed-test-start" type="button"><span class="speed-test-play-icon" aria-hidden="true">▶</span><span id="speed-test-start-label">Start speed test</span></button>
                 <button class="speed-test-cancel" id="speed-test-cancel" type="button" hidden>Stop test</button>
               </div>
-              <p class="speed-test-hint">Often takes a few to a few dozen seconds; capped at 45 seconds. Uses up to about 37 MB of test traffic, depending on connection speed.</p>
+              <p class="speed-test-hint">Enhanced sampling usually takes 20–60 seconds and stops at 65 seconds. It can use up to about 81 MB of test payload; connections may use less.</p>
             </div>
 
             <div class="speed-test-results" aria-label="Speed test results">
               <div class="speed-test-metric speed-test-upload">
-                <span class="speed-test-metric-label"><i></i> Upload</span>
+                <span class="speed-test-metric-label"><i></i> Upload median</span>
                 <strong id="speed-test-upload">—</strong>
                 <small>Mbps</small>
               </div>
               <div class="speed-test-metric">
-                <span class="speed-test-metric-label"><i></i> Download</span>
+                <span class="speed-test-metric-label"><i></i> Download median</span>
                 <strong id="speed-test-download">—</strong>
                 <small>Mbps</small>
               </div>
@@ -142,21 +142,44 @@
             </div>
           </div>
 
+          <div class="speed-test-insights">
+            <div class="speed-test-chart-panel">
+              <div class="speed-test-insights-heading">
+                <div><span class="speed-test-panel-kicker">LIVE SAMPLE TRACE</span><strong>Measured throughput</strong></div>
+                <span class="speed-test-panel-note">Mbps · each completed request</span>
+              </div>
+              <div class="speed-test-chart" id="speed-test-chart" role="img" aria-label="No speed samples collected yet">
+                <svg viewBox="0 0 640 128" aria-hidden="true"><path d="M20 12H620M20 45H620M20 78H620M20 112H620" /></svg>
+              </div>
+              <div class="speed-test-chart-legend">
+                <span><i class="legend-upload"></i> Upload</span>
+                <span><i class="legend-download"></i> Download</span>
+                <small>Samples are plotted in test order.</small>
+              </div>
+            </div>
+            <aside class="speed-test-quality-panel">
+              <span class="speed-test-panel-kicker">MEASUREMENT CONSISTENCY</span>
+              <strong id="speed-test-quality" data-quality="waiting">Waiting for samples</strong>
+              <p id="speed-test-sample-counts">Upload: 0 · Download: 0 valid samples</p>
+              <small>The displayed speed is the median of valid requests. The p10–p90 spread shows how much individual samples varied; it is a consistency signal, not a guarantee.</small>
+            </aside>
+          </div>
+
           <div class="speed-test-result-footer">
             <div class="speed-test-extra" id="speed-test-extra">Run the test to see your connection measurements.</div>
             <button class="speed-test-apply" id="speed-test-apply" type="button" disabled><span>Use measured upload speed</span><b aria-hidden="true">→</b></button>
           </div>
-          <p class="speed-test-disclosure"><strong>Privacy &amp; measurement:</strong> Starting the test sends small download and upload samples to Cloudflare's edge network. Cloudflare can see normal request metadata, including your IP address. TransferETA disables the library's optional result-logging endpoints and does not store your test history. The measured rate is a snapshot of this device's route to Cloudflare, not a guarantee from your ISP. <a href="https://github.com/cloudflare/speedtest" target="_blank" rel="noreferrer">About the measurement engine ↗</a></p>
+          <p class="speed-test-disclosure"><strong>Privacy &amp; measurement:</strong> Starting the test sends repeated download and upload samples to Cloudflare's edge network (up to about 81 MB of configured payload). Cloudflare can see normal request metadata, including your IP address. TransferETA disables the library's optional result-logging endpoints and does not store your test history. Throughput uses the median of valid samples; the p10–p90 spread indicates sample variability. Results describe this device's route to Cloudflare at test time, not a guarantee from your ISP. <a href="https://github.com/cloudflare/speedtest" target="_blank" rel="noreferrer">About the measurement engine ↗</a></p>
         </div>
       </section>
 
       <section class="calculator-section section-wrap" id="calculator">
-        <div class="section-heading calculator-heading">
+        <div class="section-heading calculator-heading" data-reveal>
           <div><span class="section-kicker">THE CALCULATOR</span><h2>Make the numbers work for you.</h2></div>
           <div class="privacy-note"><span class="lock-icon" aria-hidden="true">⌑</span><span><strong>Your data stays yours.</strong><br />Calculations happen in your browser.</span></div>
         </div>
 
-        <div class="calculator-card">
+        <div class="calculator-card" data-reveal>
           <div class="calculator-side">
             <div class="mode-switch" role="tablist" aria-label="Calculator mode">
               <button class="mode-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="calculator-form" data-mode="upload-time"><span class="mode-number">01</span><span>Upload time</span></button>
@@ -203,7 +226,7 @@
           </aside>
         </div>
 
-        <div class="simulation-card" id="simulation-card">
+        <div class="simulation-card" id="simulation-card" data-reveal>
           <div class="simulation-heading">
             <div class="simulation-title-wrap"><span class="simulation-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h16M4 12h10M4 16.5h7"/><path d="m16 14 4 2.5-4 2.5z"/></svg></span><div><h3>Transfer preview</h3><p>See how progress would look over time.</p></div></div>
             <span class="simulation-badge">SIMULATION ONLY</span>
@@ -215,7 +238,7 @@
           <p class="simulation-note">This is a time-scaled visual estimate—not a live upload. No file is selected, read, or transferred.</p>
         </div>
 
-        <div class="comparison-section" id="comparison-section">
+        <div class="comparison-section" id="comparison-section" data-reveal>
           <div class="comparison-heading"><div><span class="section-kicker">SPEED COMPARISON</span><h3>What difference does speed make?</h3></div><p>Compare upload times for the same file at a few common connection rates.</p></div>
           <div class="comparison-grid" id="comparison-grid">
             <div class="comparison-item"><span>25 Mbps</span><strong>53 min 20 sec</strong><i></i></div>
@@ -229,7 +252,7 @@
 
       <section class="benefits-section section-wrap" aria-labelledby="benefits-title">
         <div class="section-heading"><div><span class="section-kicker">BUILT FOR REAL-WORLD QUESTIONS</span><h2 id="benefits-title">One tool. Three useful answers.</h2></div><p>Whether you're planning a delivery, choosing a connection, or working against a deadline, get to the number that matters.</p></div>
-        <div class="benefits-grid">
+        <div class="benefits-grid" data-reveal>
           <article class="benefit-card"><span class="benefit-number">01</span><div class="benefit-icon blue"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 4v14m-5-5 5 5 5-5M5 21h18"/></svg></div><h3>Estimate upload time</h3><p>Start with a file size and your upload speed. Get a clear, easy-to-read time estimate.</p><span class="benefit-link">Plan your transfer <b>↗</b></span></article>
           <article class="benefit-card"><span class="benefit-number">02</span><div class="benefit-icon violet"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M4.5 20.5 11 14l4.5 4.5 8-9M17 9h7v7"/></svg></div><h3>Find the speed you need</h3><p>Set a deadline and file size. See the upload throughput required to make it happen.</p><span class="benefit-link">Work backwards <b>↗</b></span></article>
           <article class="benefit-card"><span class="benefit-number">03</span><div class="benefit-icon mint"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 4v20M4 14h20M8 8l12 12M20 8 8 20"/><circle cx="14" cy="14" r="9.5"/></svg></div><h3>Know your transfer limit</h3><p>Enter your speed and available time. Estimate how much data you can send.</p><span class="benefit-link">Set your capacity <b>↗</b></span></article>
