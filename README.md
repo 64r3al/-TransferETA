@@ -13,7 +13,7 @@ TransferETA is a privacy-first browser tool for estimating file-transfer time, f
 
 ## Features
 
-- **Browser-based speed test:** measure download/upload throughput, idle ping, and jitter against Cloudflare's edge network, then apply the measured upload result to the upload-time calculator with one click.
+- **Enhanced browser speed test:** repeated upload/download samples, median throughput, live sample chart, p10–p90 consistency spread, idle ping/jitter, and loaded latency/jitter. Apply the measured upload median to the calculator with one click.
 - **Three calculator modes:** upload time, required upload speed, and maximum transferable size.
 - **SI and IEC file-size units:** B, KB, MB, GB, TB, KiB, MiB, GiB, and TiB.
 - **Bits and bytes kept distinct:** bit/s, Kbit/s, Mbit/s, Gbit/s, B/s, KB/s, MB/s, and GB/s.
@@ -127,7 +127,7 @@ See [Calculation Method](docs/CALCULATION_METHOD.md) for the full specification 
 
 ## Speed test and privacy
 
-The speed test is opt-in: it does not run until the visitor presses **Start speed test**. It uses Cloudflare's official `@cloudflare/speedtest` module and Cloudflare's edge measurement endpoints to measure download throughput, upload throughput, idle latency, and jitter. The test uses a bounded series of requests with a configured payload ceiling of about 36.4 MB; faster connections may complete fewer ramp-up rounds. A typical run is often a few to a few dozen seconds and is capped at 45 seconds.
+The speed test is opt-in: it does not run until the visitor presses **Start speed test**. It uses Cloudflare's official `@cloudflare/speedtest` module and Cloudflare's edge measurement endpoints. The enhanced plan requests up to 10 throughput samples per direction and 25 idle-latency probes, reports the median throughput plus p10–p90 sample spread, and plots the sample trace. The configured payload ceiling is about 80.1 MB; Cloudflare may stop a direction's ramp early. The run is capped at 65 seconds and individual requests at 12 seconds.
 
 The application explicitly sets `logAimApiUrl: null` and `logMeasurementApiUrl: null`, disabling the module's optional final-result and per-measurement logging endpoints. The measurement requests themselves still go to Cloudflare, which can receive normal request metadata such as the visitor's IP address and request timing. Review [Cloudflare's speed-test information](https://speed.cloudflare.com/about) and [the open-source measurement engine](https://github.com/cloudflare/speedtest) for provider details.
 
