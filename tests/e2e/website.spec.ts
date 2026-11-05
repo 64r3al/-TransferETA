@@ -61,6 +61,9 @@ test("speed test is opt-in and discloses the external measurement provider", asy
   await expect(page.getByRole("heading", { name: /Test first\. Estimate with real data/i })).toBeVisible();
   await expect(page.locator("#speed-test-status")).toContainText("starts only when you press");
   await expect(page.getByText(/your IP address/i)).toBeVisible();
+  await expect(page.getByText(/up to about 81 MB/i)).toBeVisible();
+  await expect(page.locator("#speed-test-chart")).toBeVisible();
+  await expect(page.locator("#speed-test-quality")).toContainText("Waiting for samples");
   expect(providerRequests).toHaveLength(0);
 });
 

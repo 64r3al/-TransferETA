@@ -543,3 +543,96 @@ h1, h2, h3, p { margin-top: 0; }
   .speed-test-metric { min-height: 95px; padding: 12px 10px; }
   .speed-test-metric strong { font-size: 22px; }
 }
+
+
+/* Enhanced measurement visuals and restrained motion polish */
+.speed-test-insights {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(220px, .75fr);
+  gap: 12px;
+  margin: 1px 0 20px;
+}
+.speed-test-chart-panel, .speed-test-quality-panel {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: linear-gradient(145deg, var(--surface-soft), var(--surface));
+}
+.speed-test-chart-panel { padding: 15px 16px 10px; }
+.speed-test-insights-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.speed-test-insights-heading > div { display: grid; gap: 5px; }
+.speed-test-insights-heading strong { color: var(--ink); font-size: 12px; letter-spacing: -.2px; }
+.speed-test-panel-kicker { color: var(--muted); font-size: 8px; font-weight: 820; letter-spacing: 1.15px; }
+.speed-test-panel-note { color: var(--muted); font-size: 8px; }
+.speed-test-chart { height: 130px; margin-top: 5px; overflow: hidden; }
+.speed-test-chart svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.speed-chart-grid { fill: none; stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 5; }
+.speed-chart-line { fill: none; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; stroke-dasharray: 900; stroke-dashoffset: 900; animation: speed-chart-draw 1.1s cubic-bezier(.2,.7,.2,1) forwards; }
+.speed-chart-upload-line { stroke: var(--green); }
+.speed-chart-download-line { stroke: var(--brand); }
+.speed-chart-area { opacity: .08; }
+.speed-chart-upload-area { fill: var(--green); }
+.speed-chart-download-area { fill: var(--brand); }
+.speed-chart-dot { stroke: var(--surface); stroke-width: 1.8; vector-effect: non-scaling-stroke; animation: speed-dot-in .35s ease both; }
+.speed-chart-upload-dot { fill: var(--green); }
+.speed-chart-download-dot { fill: var(--brand); }
+.speed-test-chart-legend { display: flex; align-items: center; gap: 17px; color: var(--ink-soft); font-size: 8px; }
+.speed-test-chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.speed-test-chart-legend i { width: 7px; height: 7px; border-radius: 50%; }
+.speed-test-chart-legend .legend-upload { background: var(--green); }
+.speed-test-chart-legend .legend-download { background: var(--brand); }
+.speed-test-chart-legend small { margin-left: auto; color: var(--muted); font-size: 8px; }
+.speed-test-quality-panel { display: flex; flex-direction: column; justify-content: center; padding: 18px; background: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--brand) 10%, transparent), transparent 52%), var(--surface-soft); }
+.speed-test-quality-panel > strong { margin-top: 10px; color: var(--ink); font-size: clamp(14px, 1.5vw, 18px); line-height: 1.3; letter-spacing: -.45px; }
+.speed-test-quality-panel > strong[data-quality="steady"] { color: var(--green); }
+.speed-test-quality-panel > strong[data-quality="mixed"] { color: #c18a32; }
+.speed-test-quality-panel > strong[data-quality="variable"] { color: #d17c56; }
+.speed-test-quality-panel > p { margin: 9px 0 8px; color: var(--ink-soft); font-size: 9px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+.speed-test-quality-panel > small { color: var(--muted); font-size: 8px; line-height: 1.65; }
+.speed-test-metric { transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease; }
+.speed-test-metric:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--brand) 32%, var(--line)); box-shadow: var(--shadow-soft); }
+.speed-test-card, .calculator-card, .simulation-card { transition: box-shadow .28s ease, border-color .28s ease; }
+.speed-test-card:hover, .calculator-card:hover, .simulation-card:hover { box-shadow: var(--shadow); }
+.visual-orbit { animation: orbit-breathe 11s ease-in-out infinite alternate; }
+.orbit-two { animation-delay: -4s; }
+.visual-file-card { animation: visual-float 6s ease-in-out infinite; }
+.visual-speed-card { animation: visual-float 7s ease-in-out -2s infinite; }
+.route-dot { animation: route-pulse 1.8s ease-in-out infinite; }
+.route-arrow { animation: route-drift 3.2s ease-in-out infinite; }
+.visual-speed-card .speed-sub i { box-shadow: 0 0 0 0 color-mix(in srgb, var(--green) 35%, transparent); animation: route-pulse 2s ease-in-out infinite; }
+
+html.motion-enabled [data-reveal] {
+  opacity: 0;
+  transform: translateY(19px);
+  transition: opacity .68s cubic-bezier(.2,.7,.2,1), transform .68s cubic-bezier(.2,.7,.2,1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+html.motion-enabled [data-reveal].is-visible { opacity: 1; transform: translateY(0); }
+
+@keyframes speed-chart-draw { to { stroke-dashoffset: 0; } }
+@keyframes speed-dot-in { from { opacity: 0; transform: scale(.65); } to { opacity: 1; transform: scale(1); } }
+@keyframes orbit-breathe { from { transform: rotate(-25deg) scale(.96); opacity: .42; } to { transform: rotate(-18deg) scale(1.04); opacity: .82; } }
+@keyframes visual-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
+@keyframes route-pulse { 50% { opacity: .55; box-shadow: 0 0 0 7px color-mix(in srgb, var(--green) 9%, transparent); } }
+@keyframes route-drift { 0%, 100% { transform: rotate(45deg) translateY(0); } 50% { transform: rotate(45deg) translateY(-4px); } }
+
+@media (max-width: 980px) {
+  .speed-test-insights { grid-template-columns: 1fr; }
+  .speed-test-quality-panel { min-height: 142px; }
+}
+@media (max-width: 600px) {
+  .speed-test-insights { gap: 9px; margin-bottom: 16px; }
+  .speed-test-chart-panel { padding: 12px 10px 9px; }
+  .speed-test-chart { height: 112px; }
+  .speed-test-panel-note { max-width: 105px; text-align: right; line-height: 1.4; }
+  .speed-test-chart-legend { gap: 12px; }
+  .speed-test-chart-legend small { display: none; }
+  .speed-test-quality-panel { padding: 15px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.motion-enabled [data-reveal] { opacity: 1; transform: none; transition: none; }
+  .visual-orbit, .visual-file-card, .visual-speed-card, .route-dot, .route-arrow,
+  .visual-speed-card .speed-sub i, .speed-chart-line, .speed-chart-dot {
+    animation: none !important;
+  }
+}
